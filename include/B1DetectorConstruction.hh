@@ -1,33 +1,3 @@
-//
-// ********************************************************************
-// * License and Disclaimer                                           *
-// *                                                                  *
-// * The  Geant4 software  is  copyright of the Copyright Holders  of *
-// * the Geant4 Collaboration.  It is provided  under  the terms  and *
-// * conditions of the Geant4 Software License,  included in the file *
-// * LICENSE and available at  http://cern.ch/geant4/license .  These *
-// * include a list of copyright holders.                             *
-// *                                                                  *
-// * Neither the authors of this software system, nor their employing *
-// * institutes,nor the agencies providing financial support for this *
-// * work  make  any representation or  warranty, express or implied, *
-// * regarding  this  software system or assume any liability for its *
-// * use.  Please see the license in the file  LICENSE  and URL above *
-// * for the full disclaimer and the limitation of liability.         *
-// *                                                                  *
-// * This  code  implementation is the result of  the  scientific and *
-// * technical work of the GEANT4 collaboration.                      *
-// * By using,  copying,  modifying or  distributing the software (or *
-// * any work based  on the software)  you  agree  to acknowledge its *
-// * use  in  resulting  scientific  publications,  and indicate your *
-// * acceptance of all terms of the Geant4 Software license.          *
-// ********************************************************************
-//
-// $Id: B1DetectorConstruction.hh 69565 2013-05-08 12:35:31Z gcosmo $
-//
-/// \file B1DetectorConstruction.hh
-/// \brief Definition of the B1DetectorConstruction class
-
 #ifndef B1DetectorConstruction_h
 #define B1DetectorConstruction_h 1
 
@@ -36,24 +6,115 @@
 
 class G4VPhysicalVolume;
 class G4LogicalVolume;
+class B1DetectorMessenger;
+class G4Material;
+class G4VSolid;
+class FakeSD;
+#include "G4ThreeVector.hh"
+#include "G4String.hh"
 
 /// Detector construction class to define materials and geometry.
 
 class B1DetectorConstruction : public G4VUserDetectorConstruction
 {
-  public:
-    B1DetectorConstruction();
-    virtual ~B1DetectorConstruction();
+   private:
 
-    virtual G4VPhysicalVolume* Construct();
-    
-    G4LogicalVolume* GetScoringVolume() const { return fScoringVolume; }
+      G4double world_x                       ;
+      G4double world_y                       ;
+      G4double world_z                       ;
+      G4double radiator_thickness            ;
+      G4double collimator_target_center_gap  ;
+      G4double collimator_ID                 ;
+      G4double collimator_OD                 ;
+      G4double collimator_diameter           ;
+      G4double collimator_z_end              ;
+      G4double radiator_collimator_gap ;
+      G4double collimator_length   ;
+      G4double beampipe_length   ;
+      G4double beampipe_diameter ;
+      G4double radiator_diameter ;
+      G4double scoring_diameter  ;
+      G4double scoring_length    ;
+      G4double window_diameter   ;
+      G4double window_thickness  ;
+      G4double scoring2_diameter ;
+      G4double scoring2_length   ;
 
-  protected:
-    G4LogicalVolume*  fScoringVolume;
+   protected:
+      G4LogicalVolume     * fScoringVolume;
+      B1DetectorMessenger * fMessenger;
+      G4String    fCollimatorMatName;
+
+      bool fHasBeenBuilt;
+
+
+   private:
+
+      FakeSD * scoring_det;
+      FakeSD * scoring2_det;
+
+      G4Material        * world_mat   ;
+      G4VSolid          * world_solid ;
+      G4LogicalVolume   * world_log   ;
+      G4VPhysicalVolume * world_phys  ;
+
+      G4ThreeVector       beampipe_pos;
+      G4Material        * beampipe_mat   ;
+      G4VSolid          * beampipe_solid ;
+      G4LogicalVolume   * beampipe_log   ;
+      G4VPhysicalVolume * beampipe_phys  ;
+      G4ThreeVector       radiator_pos;
+      G4Material        * radiator_mat  ;
+      G4VSolid          * radiator_solid;
+      G4LogicalVolume   * radiator_log  ;
+      G4VPhysicalVolume * radiator_phys ;
+      G4ThreeVector       collimator_pos;
+      G4Material        * collimator_mat ;  
+      G4VSolid          * collimator_solid ;
+      G4LogicalVolume   * collimator_log ;  
+      G4VPhysicalVolume * collimator_phys;  
+      G4ThreeVector       scoring_pos;
+      G4Material        * scoring_mat   ;
+      G4VSolid          * scoring_solid ;
+      G4LogicalVolume   * scoring_log   ;
+      G4VPhysicalVolume * scoring_phys  ;
+      G4ThreeVector       window_pos;
+      G4Material        * window_mat  ;
+      G4VSolid          * window_solid;
+      G4LogicalVolume   * window_log  ;
+      G4VPhysicalVolume * window_phys ;
+      G4ThreeVector       scoring2_pos;
+      G4Material        * scoring2_mat  ;
+      G4VSolid          * scoring2_solid;
+      G4LogicalVolume   * scoring2_log  ;
+      G4VPhysicalVolume * scoring2_phys ;
+
+   public:
+      B1DetectorConstruction();
+      virtual ~B1DetectorConstruction();
+
+      virtual G4VPhysicalVolume* Construct();
+
+      void SetRadiatorMaterial(G4String);
+      void SetCollimatorMaterial(G4String);
+
+      G4double GetRadiatorCollimatorGap() const {return radiator_collimator_gap;}
+      G4double GetCollimatorLength() const {return collimator_length;}
+
+      void     SetRadiatorCollimatorGap(G4double l) ;
+      void     SetCollimatorLength(G4double l) ;
+
+      void     PrintConfigInfo() const;
+
+      void CalculatePositions();
+
+      void Rebuild();
+
+      G4LogicalVolume* GetScoringVolume() const { return fScoringVolume; }
+
+   protected:
 };
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+//______________________________________________________________________________
 
 #endif
 
