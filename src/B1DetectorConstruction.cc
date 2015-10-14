@@ -31,7 +31,9 @@ B1DetectorConstruction::B1DetectorConstruction() :
    radiator_thickness           ( 6.0*mm                 ),
    collimator_target_center_gap ( 4.0*cm                 ),
    collimator_ID                ( 1.0*cm                 ),
-   collimator_OD                ( 4.0*2.54*cm            ),
+   collimator_OD                ( 2.54*cm                ),
+   outer_collimator_ID          ( 2.54*cm                ),
+   outer_collimator_OD          ( 4.0*2.54*cm            ),
    collimator_diameter          ( 8.0*cm            ),
    collimator_z_end             ( 0.0*cm            ),
    radiator_collimator_gap      ( 1.0*mm                 ),
@@ -40,11 +42,11 @@ B1DetectorConstruction::B1DetectorConstruction() :
    beampipe_diameter            ( 8.0*cm  ),
    radiator_diameter            ( 8.0*cm  ),
    scoring_diameter             ( 20.0*cm ),
-   scoring_length               ( 1*mm    ),
+   scoring_length               ( 0.01*mm    ),
    window_diameter              ( 1.0*cm  ),
-   window_thickness             ( 3.0*mm  ),
+   window_thickness             ( 8.0*mm  ),
    scoring2_diameter            ( 20.0*cm ),
-   scoring2_length              ( 1*mm    ),
+   scoring2_length              ( 0.01*mm    ),
    fScoringVolume               ( 0),
    fHasBeenBuilt(false)
 {
@@ -70,6 +72,14 @@ B1DetectorConstruction::B1DetectorConstruction() :
    collimator_solid = 0;
    collimator_log   = 0;
    collimator_phys  = 0;
+   collimator2_mat   = 0;
+   collimator2_solid = 0;
+   collimator2_log   = 0;
+   collimator2_phys  = 0;
+   outer_collimator_mat   = 0;
+   outer_collimator_solid = 0;
+   outer_collimator_log   = 0;
+   outer_collimator_phys  = 0;
    scoring_mat      = 0;
    scoring_solid    = 0;
    scoring_log      = 0;
@@ -102,7 +112,9 @@ void B1DetectorConstruction::CalculatePositions()
 {
    beampipe_pos     = { 0, 0, -beampipe_length/2.0 - radiator_thickness/2.0 };
    radiator_pos     = { 0, 0, 0.0 };
-   collimator_pos   = { 0, 0, collimator_length/2.0 + radiator_thickness/2.0 + radiator_collimator_gap };
+   collimator_pos   = { 0, 0, collimator_length/4.0 + radiator_thickness/2.0 + radiator_collimator_gap };
+   collimator2_pos   = { 0, 0, 3.0*collimator_length/4.0 + radiator_thickness/2.0 + radiator_collimator_gap };
+   outer_collimator_pos   = { 0, 0, collimator_length/2.0 + radiator_thickness/2.0 + radiator_collimator_gap };
    collimator_z_end = collimator_length + radiator_thickness/2.0 + radiator_collimator_gap;
    scoring_pos      = { 0, 0, radiator_thickness/2.0 + radiator_collimator_gap/2.0 };
    window_pos       = { 0, 0, collimator_z_end - window_thickness/2.0 };
@@ -182,8 +194,8 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
    // ------------------------------------------------------------------------
    // radiator target centered at origin
    // ------------------------------------------------------------------------
-   red       = 215.0/256.0;
-   green     = 97.0/256.0;
+   red       = 256.0/256.0;
+   green     = 1.0/256.0;
    blue      = 1.0/256.0;
    alpha     = 0.4;
 
@@ -204,25 +216,70 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
    //scoring_log->SetUserLimits(scoring_limits);
 
    // ------------------------------------------------------------------------
-   // Cu Collimator 
+   // Inner Collimator 
    // ------------------------------------------------------------------------
-   red       = 215.0/256.0;
-   green     = 97.0/256.0;
+   // Part I : Upstream inner cone 
+   red       = 250.0/256.0;
+   green     = 0.0/256.0;
    blue      = 1.0/256.0;
    alpha     = 0.4;
 
    if(collimator_phys) delete collimator_phys;
-   if(collimator_log) delete collimator_log;
+   if(collimator_log)  delete collimator_log;
    if(collimator_solid) delete collimator_solid;
 
    collimator_mat   = nist->FindOrBuildMaterial(fCollimatorMatName);
-   collimator_solid = new G4Tubs("collimator_solid", collimator_ID/2.0, collimator_OD/2.0, collimator_length/2.0, 0.0, 360.*deg );
+   //collimator_solid = new G4Tubs("collimator_solid", collimator_ID/2.0, collimator_OD/2.0, collimator_length/2.0, 0.0, 360.*deg );
+   collimator_solid = new G4Cons("collimator_solid", collimator_ID/4.0, collimator_OD/2.0, collimator_ID/2.0, collimator_OD/2.0, collimator_length/4.0, 0.0, 360.*deg );
    collimator_log   = new G4LogicalVolume(collimator_solid, collimator_mat,"collimator_log");
    collimator_phys  = new G4PVPlacement(0,collimator_pos, collimator_log, "collimator_phys",world_log,false,0,checkOverlaps);                                  
 
    G4Colour            collimator_color {red, green, blue, alpha };   // Gray 
    G4VisAttributes   * collimator_vis   = new G4VisAttributes(collimator_color);
    collimator_log->SetVisAttributes(collimator_vis);
+
+   // ------------------------------------------------------------------------
+   // Part II : downstream inner cone 
+   red       = 250.0/256.0;
+   green     = 0.0/256.0;
+   blue      = 1.0/256.0;
+   alpha     = 0.4;
+
+   if(collimator2_phys) delete collimator2_phys;
+   if(collimator2_log)  delete collimator2_log;
+   if(collimator2_solid) delete collimator2_solid;
+
+   collimator2_mat   = nist->FindOrBuildMaterial(fCollimatorMatName);
+   //collimator2_solid = new G4Tubs("collimator2_solid", collimator2_ID/2.0, collimator2_OD/2.0, collimator2_length/2.0, 0.0, 360.*deg );
+   collimator2_solid = new G4Cons("collimator2_solid", collimator_ID/4.0, collimator_OD/2.0, collimator_ID/2.0, collimator_OD/2.0, collimator_length/4.0, 0.0, 360.*deg );
+   collimator2_log   = new G4LogicalVolume(collimator2_solid, collimator2_mat,"collimator2_log");
+   collimator2_phys  = new G4PVPlacement(0,collimator2_pos, collimator2_log, "collimator2_phys",world_log,false,0,checkOverlaps);                                  
+
+   G4Colour            collimator2_color {red, green, blue, alpha };   // Gray 
+   G4VisAttributes   * collimator2_vis   = new G4VisAttributes(collimator2_color);
+   collimator2_log->SetVisAttributes(collimator2_vis);
+
+
+   // ------------------------------------------------------------------------
+   // Outer Collimator 
+   // ------------------------------------------------------------------------
+   red       = 0.0/256.0;
+   green     = 256.0/256.0;
+   blue      = 1.0/256.0;
+   alpha     = 0.4;
+
+   if(outer_collimator_phys)  delete outer_collimator_phys;
+   if(outer_collimator_log)   delete outer_collimator_log;
+   if(outer_collimator_solid) delete outer_collimator_solid;
+
+   outer_collimator_mat   = nist->FindOrBuildMaterial("G4_Cu");
+   outer_collimator_solid = new G4Tubs("outer_collimator_solid", outer_collimator_ID/2.0, outer_collimator_OD/2.0, collimator_length/2.0, 0.0, 360.*deg );
+   outer_collimator_log   = new G4LogicalVolume(outer_collimator_solid, outer_collimator_mat,"outer_collimator_log");
+   outer_collimator_phys  = new G4PVPlacement(0,outer_collimator_pos, outer_collimator_log, "outer_collimator_phys",world_log,false,0,checkOverlaps);                                  
+   G4Colour            outer_collimator_color {red, green, blue, alpha };   // Gray 
+   G4VisAttributes   * outer_collimator_vis   = new G4VisAttributes(outer_collimator_color);
+   outer_collimator_vis->SetForceWireframe(true);
+   outer_collimator_log->SetVisAttributes(outer_collimator_vis);
 
    // ------------------------------------------------------------------------
    // Scoring volume 
@@ -264,8 +321,10 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
    if(window_log) delete window_log;
    if(window_solid) delete window_solid;
 
+   double cone_slope = (collimator_ID/4.0)/(collimator_length/2.0);
    window_mat   = nist->FindOrBuildMaterial("G4_Cu");
-   window_solid  = new G4Tubs("window_solid", 0.0, window_diameter/2.0, window_thickness/2.0, 0.0, 360.*deg );
+   //window_solid  = new G4Tubs("window_solid", 0.0, window_diameter/2.0, window_thickness/2.0, 0.0, 360.*deg );
+   window_solid = new G4Cons("collimator2_solid", 0.0, window_diameter/2.0 - cone_slope*window_thickness, 0.0, window_diameter/2.0, window_thickness/2.0, 0.0, 360.*deg );
    window_log   = new G4LogicalVolume(window_solid, window_mat,"window_log");
    window_phys  = new G4PVPlacement(0,window_pos, window_log, "window_phys",world_log,false,0,checkOverlaps);                                  
 
@@ -321,6 +380,14 @@ void B1DetectorConstruction::SetCollimatorMaterial(G4String materialName)
 void     B1DetectorConstruction::SetRadiatorCollimatorGap(G4double l)
 {   
    radiator_collimator_gap = l; 
+   if(fHasBeenBuilt) Rebuild();
+}
+//______________________________________________________________________________
+
+void     B1DetectorConstruction::SetInnerCollimatorOD(G4double l)
+{   
+   collimator_OD       = l;
+   outer_collimator_ID = l;
    if(fHasBeenBuilt) Rebuild();
 }
 //______________________________________________________________________________

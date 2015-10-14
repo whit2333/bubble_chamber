@@ -1,7 +1,7 @@
 #!/bin/bash
 
-num=1
-nevent=1000000
+num=2
+nevent=10000000
 
 mkdir -p results
 cd results
@@ -10,29 +10,29 @@ mat=Cu
 mkdir -p $mat
 cd $mat
 
-#for length in $(seq 5 5 30); do
-#
-#   filetemp=${mat}_${length}.mac
-#
-#   echo "/B1/det/setCollimatorLength ${length} cm" > $filetemp
-#   echo "/B1/det/setCollimatorMaterial G4_${mat}" >> $filetemp
-#   echo "/process/setVerbose 0 all" >> $filetemp
-#   echo "/vis/verbose 0" >> $filetemp
-#   echo "/control/verbose 0" >> $filetemp
-#   echo "/run/verbose 0" >> $filetemp
-#   echo "/event/verbose 0" >> $filetemp
-#   echo "/tracking/verbose 0" >> $filetemp
-#   echo "/run/initialize" >> $filetemp
-#   echo "/run/beamOn ${nevent}" >> $filetemp
-#   echo "/B1/det/printConfigInfo" >> $filetemp
-#
-#   ../../bin/ebl1 -b --run=$num  $filetemp &> ${mat}_${length}.log
-#
-#   mv EBL_sim_output_$num.root bubble_${mat}_${length}cm_${num}.root
-#
-#   root -b -q "../../make_plots.cxx(\"${mat}\",${length},${num})"
-#
-#done
+for length in $(seq 5 5 30); do
+
+   filetemp=${mat}_${length}.mac
+
+   echo "/B1/det/setCollimatorLength ${length} cm" > $filetemp
+   echo "/B1/det/setCollimatorMaterial G4_${mat}" >> $filetemp
+   echo "/process/setVerbose 0 all" >> $filetemp
+   echo "/vis/verbose 0" >> $filetemp
+   echo "/control/verbose 0" >> $filetemp
+   echo "/run/verbose 0" >> $filetemp
+   echo "/event/verbose 0" >> $filetemp
+   echo "/tracking/verbose 0" >> $filetemp
+   echo "/run/initialize" >> $filetemp
+   echo "/run/beamOn ${nevent}" >> $filetemp
+   echo "/B1/det/printConfigInfo" >> $filetemp
+
+   ../../bin/ebl1 -b --run=$num  $filetemp &> ${mat}_${length}.log
+
+   mv EBL_sim_output_$num.root bubble_${mat}_${length}cm_${num}.root
+
+   root -b -q "../../make_plots.cxx(\"${mat}\",${length},${num})"
+
+done
 
 cd ..
 

@@ -39,6 +39,12 @@ B1DetectorMessenger::B1DetectorMessenger(B1DetectorConstruction* Det) :
   fCollimatorLengthCmd->SetUnitCategory("Length");
   fCollimatorLengthCmd->AvailableForStates(G4State_Idle);
 
+  fInnerCollimatorODCmd = new G4UIcmdWithADoubleAndUnit("/B1/det/setInnerCollimatorOD",this);
+  fInnerCollimatorODCmd->SetGuidance("Define a the OD of the inner collimator");
+  fInnerCollimatorODCmd->SetParameterName("length",false);
+  fInnerCollimatorODCmd->SetUnitCategory("Length");
+  fInnerCollimatorODCmd->AvailableForStates(G4State_Idle);
+
   fRadiatorCollimatorGapCmd = new G4UIcmdWithADoubleAndUnit("/B1/det/setRadiatorCollimatorGap",this);
   fRadiatorCollimatorGapCmd->SetGuidance("Define a the space between the end of the radiator and the face of the collimator.");
   fRadiatorCollimatorGapCmd->SetParameterName("length",false);
@@ -85,6 +91,9 @@ void B1DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 
   if( command == fCollimatorLengthCmd )
    { fDetectorConstruction->SetCollimatorLength( G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValue));}
+
+  if( command == fInnerCollimatorODCmd )
+   { fDetectorConstruction->SetInnerCollimatorOD( G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValue));}
 
   if( command == fPrintConfigInfoCmd )
    { fDetectorConstruction->PrintConfigInfo();}

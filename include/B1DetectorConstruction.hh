@@ -24,6 +24,8 @@ class B1DetectorConstruction : public G4VUserDetectorConstruction
       G4double world_z                       ;
       G4double radiator_thickness            ;
       G4double collimator_target_center_gap  ;
+      G4double outer_collimator_ID           ;
+      G4double outer_collimator_OD           ;
       G4double collimator_ID                 ;
       G4double collimator_OD                 ;
       G4double collimator_diameter           ;
@@ -73,6 +75,16 @@ class B1DetectorConstruction : public G4VUserDetectorConstruction
       G4VSolid          * collimator_solid ;
       G4LogicalVolume   * collimator_log ;  
       G4VPhysicalVolume * collimator_phys;  
+      G4ThreeVector       collimator2_pos;
+      G4Material        * collimator2_mat ;  
+      G4VSolid          * collimator2_solid ;
+      G4LogicalVolume   * collimator2_log ;  
+      G4VPhysicalVolume * collimator2_phys;  
+      G4ThreeVector       outer_collimator_pos;
+      G4Material        * outer_collimator_mat ;  
+      G4VSolid          * outer_collimator_solid ;
+      G4LogicalVolume   * outer_collimator_log ;  
+      G4VPhysicalVolume * outer_collimator_phys;  
       G4ThreeVector       scoring_pos;
       G4Material        * scoring_mat   ;
       G4VSolid          * scoring_solid ;
@@ -103,6 +115,7 @@ class B1DetectorConstruction : public G4VUserDetectorConstruction
 
       void     SetRadiatorCollimatorGap(G4double l) ;
       void     SetCollimatorLength(G4double l) ;
+      void     SetInnerCollimatorOD(G4double l) ;
 
       void     PrintConfigInfo() const;
 
