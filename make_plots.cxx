@@ -1,4 +1,4 @@
-int make_plots(const char * mat = "Cu", int length=20, int runnumber=2, double OD = 0)
+int make_plots(const char * mat = "Au", int length=5, int runnumber=3, double OD = 20)
 {
 
    int OD_print = OD;

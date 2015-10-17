@@ -27,7 +27,7 @@ void B1Run::RecordEvent(const G4Event * evt)
 {
    G4HCofThisEvent* HCE = evt->GetHCofThisEvent();
 
-   if( numberOfEvent%100000 == 0 ) std::cout << numberOfEvent << "\n";
+   if( numberOfEvent%50000 == 0 ) std::cout << numberOfEvent << std::endl;
 
    G4Run::RecordEvent(evt); // increments run number
 }

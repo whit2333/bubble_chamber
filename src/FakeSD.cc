@@ -100,7 +100,12 @@ G4bool FakeSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 
    int pdgcode = aStep->GetTrack()->GetDefinition()->GetPDGEncoding();
 
-   if( aStep->IsLastStepInVolume() ) {
+   if (aStep->GetPreStepPoint()->GetStepStatus() == fGeomBoundary)  {
+      // First step in volume
+      // For some reason IsLastStepInVolume doesn't work for parallel geometry
+
+   //if( aStep->IsLastStepInVolume() ) {
+      //std::cout << "Made it from " << SensitiveDetectorName  << std::endl;
 
       fAnalysisManager->FillH2( fhXvsE_all, pos.x()/cm,energy);
       fAnalysisManager->FillH2( fhXY0_all, pos.x()/cm, pos.y()/cm);
