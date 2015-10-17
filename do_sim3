@@ -1,0 +1,95 @@
+#!/bin/bash
+
+num=4
+nevent=1000000
+
+mkdir -p results4
+cd results4
+
+# gold
+mat=Au
+mkdir -p $mat
+cd $mat
+
+for length in 15 10 5 20; do
+   for anOD in 15 25 30 60; do
+
+      filetemp=${mat}_${length}.mac
+      echo "/B1/det/setCollimatorLength ${length} cm" > $filetemp
+      echo "/B1/det/setInnerCollimatorOD ${anOD} mm" >> $filetemp
+      echo "/B1/det/setCollimatorMaterial G4_${mat}" >> $filetemp
+
+      echo "/process/setVerbose 0 all" >> $filetemp
+      echo "/vis/verbose 0" >> $filetemp
+      echo "/control/verbose 0" >> $filetemp
+      echo "/run/verbose 0" >> $filetemp
+      echo "/event/verbose 0" >> $filetemp
+      echo "/tracking/verbose 0" >> $filetemp
+      echo "/run/initialize" >> $filetemp
+      echo "/run/beamOn ${nevent}" >> $filetemp
+      echo "/B1/det/printConfigInfo" >> $filetemp
+      ../../bin/ebl1 -b --run=$num  $filetemp &> ${mat}_${length}.log
+      mv EBL_sim_output_${num}.root bubble_${mat}_${length}cm_${anOD}mm_${num}.root
+      root -b -q "../../make_plots.cxx(\"${mat}\",${length},${num},${anOD})"
+
+   done
+done
+cd ..
+
+# silver
+mat=Ag
+mkdir -p $mat
+cd $mat
+
+for length in 15 10 5 20; do
+   for anOD in 15 25 30 60; do
+
+      filetemp=${mat}_${length}.mac
+      echo "/B1/det/setCollimatorLength ${length} cm" > $filetemp
+      echo "/B1/det/setInnerCollimatorOD ${anOD} mm" >> $filetemp
+      echo "/B1/det/setCollimatorMaterial G4_${mat}" >> $filetemp
+      echo "/process/setVerbose 0 all" >> $filetemp
+      echo "/vis/verbose 0" >> $filetemp
+      echo "/control/verbose 0" >> $filetemp
+      echo "/run/verbose 0" >> $filetemp
+      echo "/event/verbose 0" >> $filetemp
+      echo "/tracking/verbose 0" >> $filetemp
+      echo "/run/initialize" >> $filetemp
+      echo "/run/beamOn ${nevent}" >> $filetemp
+      echo "/B1/det/printConfigInfo" >> $filetemp
+      ../../bin/ebl1 -b --run=$num  $filetemp &> ${mat}_${length}.log
+      mv EBL_sim_output_${num}.root bubble_${mat}_${length}cm_${anOD}mm_${num}.root
+      root -b -q "../../make_plots.cxx(\"${mat}\",${length},${num},${anOD})"
+
+   done
+done
+cd ..
+
+# copper
+mat=Cu
+mkdir -p $mat
+cd $mat
+
+for length in 15 10 5 20; do
+   for anOD in 15 25 30 60; do
+
+      filetemp=${mat}_${length}.mac
+      echo "/B1/det/setCollimatorLength ${length} cm" > $filetemp
+      echo "/B1/det/setInnerCollimatorOD ${anOD} mm" > $filetemp
+      echo "/B1/det/setCollimatorMaterial G4_${mat}" >> $filetemp
+      echo "/process/setVerbose 0 all" >> $filetemp
+      echo "/vis/verbose 0" >> $filetemp
+      echo "/control/verbose 0" >> $filetemp
+      echo "/run/verbose 0" >> $filetemp
+      echo "/event/verbose 0" >> $filetemp
+      echo "/tracking/verbose 0" >> $filetemp
+      echo "/run/initialize" >> $filetemp
+      echo "/run/beamOn ${nevent}" >> $filetemp
+      echo "/B1/det/printConfigInfo" >> $filetemp
+      ../../bin/ebl1 -b --run=$num  $filetemp &> ${mat}_${length}.log
+      mv EBL_sim_output_${num}.root bubble_${mat}_${length}cm_${anOD}mm_${num}.root
+      root -b -q "../../make_plots.cxx(\"${mat}\",${length},${num},${anOD})"
+
+   done
+done
+
