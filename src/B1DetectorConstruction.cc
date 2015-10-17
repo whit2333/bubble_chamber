@@ -230,7 +230,7 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 
    collimator_mat   = nist->FindOrBuildMaterial(fCollimatorMatName);
    //collimator_solid = new G4Tubs("collimator_solid", collimator_ID/2.0, collimator_OD/2.0, collimator_length/2.0, 0.0, 360.*deg );
-   collimator_solid = new G4Cons("collimator_solid", collimator_ID/4.0, collimator_OD/2.0, collimator_ID/2.0, collimator_OD/2.0, collimator_length/4.0, 0.0, 360.*deg );
+   collimator_solid = new G4Cons("collimator_solid", collimator_ID/2.0, collimator_OD/2.0, collimator_ID/2.0, collimator_OD/2.0, collimator_length/4.0, 0.0, 360.*deg );
    collimator_log   = new G4LogicalVolume(collimator_solid, collimator_mat,"collimator_log");
    collimator_phys  = new G4PVPlacement(0,collimator_pos, collimator_log, "collimator_phys",world_log,false,0,checkOverlaps);                                  
 
@@ -251,7 +251,7 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 
    collimator2_mat   = nist->FindOrBuildMaterial(fCollimatorMatName);
    //collimator2_solid = new G4Tubs("collimator2_solid", collimator2_ID/2.0, collimator2_OD/2.0, collimator2_length/2.0, 0.0, 360.*deg );
-   collimator2_solid = new G4Cons("collimator2_solid", collimator_ID/4.0, collimator_OD/2.0, collimator_ID/2.0, collimator_OD/2.0, collimator_length/4.0, 0.0, 360.*deg );
+   collimator2_solid = new G4Cons("collimator2_solid", collimator_ID/2.0, collimator_OD/2.0, collimator_ID/2.0, collimator_OD/2.0, collimator_length/4.0, 0.0, 360.*deg );
    collimator2_log   = new G4LogicalVolume(collimator2_solid, collimator2_mat,"collimator2_log");
    collimator2_phys  = new G4PVPlacement(0,collimator2_pos, collimator2_log, "collimator2_phys",world_log,false,0,checkOverlaps);                                  
 
@@ -321,7 +321,7 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
    if(window_log) delete window_log;
    if(window_solid) delete window_solid;
 
-   double cone_slope = (collimator_ID/4.0)/(collimator_length/2.0);
+   double cone_slope = 0.0;//(collimator_ID/4.0)/(collimator_length/2.0);
    window_mat   = nist->FindOrBuildMaterial("G4_Cu");
    //window_solid  = new G4Tubs("window_solid", 0.0, window_diameter/2.0, window_thickness/2.0, 0.0, 360.*deg );
    window_solid = new G4Cons("collimator2_solid", 0.0, window_diameter/2.0 - cone_slope*window_thickness, 0.0, window_diameter/2.0, window_thickness/2.0, 0.0, 360.*deg );

@@ -1,0 +1,27 @@
+
+# Invoke the DAWNFILE driver
+/vis/open DAWNFILE
+
+# Add the world volume to the current scene
+/vis/drawVolume
+
+# Add trajectories to the current scene
+#  Note: This command is not necessary in exampleN03,
+#        since the C++ method DrawTrajectory() is 
+#        described in the event action.
+/vis/scene/add/trajectories
+
+# Set camera 
+/vis/viewer/reset 
+/vis/viewer/zoom              4.5
+/vis/viewer/set/viewpointThetaPhi 75 20
+
+# Visualize events added to the current scene
+/tracking/storeTrajectory 1
+/vis/viewer/flush
+
+#/vis/viewer/set/sectionPlane on 0 0 0 cm 0 -1 0 
+/vis/viewer/addCutawayPlane 0 0 0 m 1 0 0
+
+/run/beamOn 1 
+
