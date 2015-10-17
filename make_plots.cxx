@@ -1,4 +1,4 @@
-int make_plots(const char * mat = "Au", int length=5, int runnumber=3, double OD = 0)
+int make_plots(const char * mat = "Au", int length=15, int runnumber=5, double OD = 15)
 {
 
    int OD_print = OD;
@@ -38,6 +38,7 @@ int make_plots(const char * mat = "Au", int length=5, int runnumber=3, double OD
    hnum->SetTitle("After/Before");
    hnum->Draw("hist,E1");
    hnum->GetXaxis()->SetTitle("E (MeV)");
+   hnum->GetYaxis()->SetRangeUser(0.0,0.20);
 
    c->SaveAs(Form("Ratio_in_out_%s_%dcm_%dmm_%d.pdf",mat,length,OD_print,runnumber));
 
