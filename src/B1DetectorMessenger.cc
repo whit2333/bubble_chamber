@@ -25,13 +25,13 @@ B1DetectorMessenger::B1DetectorMessenger(B1DetectorConstruction* Det) :
   fRadiatorMatCmd = new G4UIcmdWithAString("/B1/det/setRadiatorMaterial",this);
   fRadiatorMatCmd->SetGuidance("Select Material of the Radiator.");
   fRadiatorMatCmd->SetParameterName("choice",false);
-  fRadiatorMatCmd->SetCandidates("G4_Cu G4_Au G4_Ag G4_Fe");
+  fRadiatorMatCmd->SetCandidates("G4_Cu G4_Au G4_Ag G4_Fe G4_W G4_Mo G4_Pt");
   fRadiatorMatCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
   fCollimatorMatCmd = new G4UIcmdWithAString("/B1/det/setCollimatorMaterial",this);
   fCollimatorMatCmd->SetGuidance("Select Material of the Collimator.");
   fCollimatorMatCmd->SetParameterName("choice",false);
-  fCollimatorMatCmd->SetCandidates("G4_Cu G4_Au G4_Ag G4_Fe");
+  fCollimatorMatCmd->SetCandidates("G4_Cu G4_Au G4_Ag G4_Fe G4_W G4_Mo G4_Pt");
   fCollimatorMatCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
   fCollimatorLengthCmd = new G4UIcmdWithADoubleAndUnit("/B1/det/setCollimatorLength",this);
