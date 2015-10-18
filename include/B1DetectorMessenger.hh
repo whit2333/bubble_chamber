@@ -8,6 +8,7 @@ class B1DetectorConstruction;
 class G4UIdirectory;
 class G4UIcmdWithAString;
 class G4UIcmdWithADoubleAndUnit;
+class G4UIcmdWithADouble;
 class G4UIcmdWithoutParameter;
 
 
@@ -36,7 +37,9 @@ class B1DetectorMessenger: public G4UImessenger
     G4UIcmdWithAString        * fRadiatorMatCmd;
     G4UIcmdWithAString        * fCollimatorMatCmd;
     G4UIcmdWithADoubleAndUnit * fCollimatorLengthCmd;
-    G4UIcmdWithADoubleAndUnit * fCollimatorToothSlopeCmd;
+    G4UIcmdWithADouble        * fCollimatorToothSlopeCmd;
+    G4UIcmdWithADoubleAndUnit * fInnerCollimatorUpstreamIDCmd;
+    G4UIcmdWithADoubleAndUnit * fInnerCollimatorDownstreamIDCmd;
     G4UIcmdWithADoubleAndUnit * fInnerCollimatorODCmd;
     G4UIcmdWithADoubleAndUnit * fRadiatorCollimatorGapCmd;
     G4UIcmdWithAString        * fTargMatCmd;

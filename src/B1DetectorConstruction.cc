@@ -30,7 +30,8 @@ B1DetectorConstruction::B1DetectorConstruction() :
    world_z                      ( 1.0*m                  ),
    radiator_thickness           ( 6.0*mm                 ),
    collimator_target_center_gap ( 4.0*cm                 ),
-   collimator_ID                ( 1.0*cm                 ),
+   collimator_upstream_ID       ( 1.0*cm                 ),
+   collimator_downstream_ID     ( 1.0*cm                 ),
    collimator_OD                ( 2.54*cm                ),
    outer_collimator_ID          ( 2.54*cm                ),
    outer_collimator_OD          ( 4.0*2.54*cm            ),
@@ -227,12 +228,17 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 
    // For later use:
    double N_teeth = 2.0;
-
    // change in the radius
-   double delta_r = collimator_tooth_slope*collimator_length/N_teeth;
+   double delta_r = (collimator_downstream_ID-collimator_upstream_ID)/2.0;
+   collimator_tooth_slope = delta_r/(collimator_length/N_teeth);
 
-   // check that the upstream ID is not less than zero
-   if(collimator_ID - delta_r < 0 ) delta_r = collimator_ID;
+   //// check that the upstream ID is not less than zero
+   //if(collimator_ID - delta_r < 0 ){
+   //   std::cout << "Warning: invalid collimator tooth slope!\n";
+   //   delta_r = collimator_ID;
+   //   collimator_tooth_slope = delta_r/(collimator_length/N_teeth);
+   //}
+
 
    if(collimator_phys)  delete collimator_phys;
    if(collimator_log)   delete collimator_log;
@@ -240,8 +246,8 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 
    collimator_mat   = nist->FindOrBuildMaterial(fCollimatorMatName);
    collimator_solid = new G4Cons( "collimator_solid", 
-         (collimator_ID - delta_r)/2.0, collimator_OD/2.0, 
-         (collimator_ID + delta_r)/2.0, collimator_OD/2.0, 
+         (collimator_upstream_ID)/2.0, collimator_OD/2.0, 
+         (collimator_downstream_ID)/2.0, collimator_OD/2.0, 
          collimator_length/4.0, 0.0, 360.*deg );
    collimator_log   = new G4LogicalVolume(collimator_solid, collimator_mat,"collimator_log");
    collimator_phys  = new G4PVPlacement(0,collimator_pos, collimator_log, "collimator_phys",world_log,false,0,checkOverlaps);                                  
@@ -262,9 +268,9 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
    if(collimator2_solid) delete collimator2_solid;
 
    collimator2_mat   = nist->FindOrBuildMaterial(fCollimatorMatName);
-   collimator2_solid = new G4Cons( "collimator_solid", 
-         (collimator_ID - delta_r)/2.0, collimator_OD/2.0, 
-         (collimator_ID + delta_r)/2.0, collimator_OD/2.0, 
+   collimator2_solid = new G4Cons( "collimator2_solid", 
+         (collimator_upstream_ID)/2.0, collimator_OD/2.0, 
+         (collimator_downstream_ID)/2.0, collimator_OD/2.0, 
          collimator_length/4.0, 0.0, 360.*deg );
    //collimator2_solid = new G4Cons("collimator2_solid", collimator_ID/2.0, collimator_OD/2.0, collimator_ID/2.0, collimator_OD/2.0, collimator_length/4.0, 0.0, 360.*deg );
    collimator2_log   = new G4LogicalVolume(collimator2_solid, collimator2_mat,"collimator2_log");
@@ -336,10 +342,13 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
    if(window_log) delete window_log;
    if(window_solid) delete window_solid;
 
-   double cone_slope = 0.0;//(collimator_ID/4.0)/(collimator_length/2.0);
+   window_diameter = collimator_downstream_ID;
+   double cone_slope = collimator_tooth_slope;//(collimator_ID/4.0)/(collimator_length/2.0);
    window_mat   = nist->FindOrBuildMaterial("G4_Cu");
-   //window_solid  = new G4Tubs("window_solid", 0.0, window_diameter/2.0, window_thickness/2.0, 0.0, 360.*deg );
-   window_solid = new G4Cons("collimator2_solid", 0.0, window_diameter/2.0 - cone_slope*window_thickness, 0.0, window_diameter/2.0, window_thickness/2.0, 0.0, 360.*deg );
+   window_solid = new G4Cons("collimator2_solid", 
+         0.0, window_diameter/2.0 - cone_slope*window_thickness, 
+         0.0, window_diameter/2.0,
+         window_thickness/2.0, 0.0, 360.*deg );
    window_log   = new G4LogicalVolume(window_solid, window_mat,"window_log");
    window_phys  = new G4PVPlacement(0,window_pos, window_log, "window_phys",world_log,false,0,checkOverlaps);                                  
 
@@ -407,6 +416,19 @@ void     B1DetectorConstruction::SetInnerCollimatorOD(G4double l)
 }
 //______________________________________________________________________________
 
+void     B1DetectorConstruction::SetInnerCollimatorUpstreamID(G4double l)
+{   
+   collimator_upstream_ID       = l;
+   if(fHasBeenBuilt) Rebuild();
+}
+//______________________________________________________________________________
+
+void     B1DetectorConstruction::SetInnerCollimatorDownstreamID(G4double l)
+{   
+   collimator_downstream_ID       = l;
+   if(fHasBeenBuilt) Rebuild();
+}
+//______________________________________________________________________________
 void     B1DetectorConstruction::SetCollimatorLength(G4double l)
 {   
    collimator_length = l;
@@ -431,7 +453,8 @@ void     B1DetectorConstruction::PrintConfigInfo() const
          << "                   weight : " << collimator_log->GetMass(true)/kg << " kg\n"
          << "                 material : " << fCollimatorMatName               << "\n"
          << "                   length : " << collimator_length/cm             << " cm\n"
-         << "           collimator ID  : " << collimator_ID/cm                 << " cm\n"
+         << "  collimator upstream_ID  : " << collimator_upstream_ID/cm        << " cm\n"
+         << "collimator downstream_ID  : " << collimator_downstream_ID/cm      << " cm\n"
          << "           collimator OD  : " << collimator_OD/cm                 << " cm\n"
          << " radiator collimator gap  : " << radiator_collimator_gap/cm       << " cm\n"
          << "  collimator target dist  : " << collimator_target_center_gap/cm  << " cm\n"

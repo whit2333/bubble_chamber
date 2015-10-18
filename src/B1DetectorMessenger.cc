@@ -3,6 +3,7 @@
 
 #include "G4UIdirectory.hh"
 #include "G4UIcmdWithAString.hh"
+#include "G4UIcmdWithADouble.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
 #include "G4UIcmdWithoutParameter.hh"
 
@@ -39,10 +40,21 @@ B1DetectorMessenger::B1DetectorMessenger(B1DetectorConstruction* Det) :
   fCollimatorLengthCmd->SetUnitCategory("Length");
   fCollimatorLengthCmd->AvailableForStates(G4State_Idle);
 
-  fCollimatorToothSlopeCmd = new G4UIcmdWithADoubleAndUnit("/B1/det/setCollimatorToothSlope",this);
+  fInnerCollimatorUpstreamIDCmd = new G4UIcmdWithADoubleAndUnit("/B1/det/setCollimatorUpstreamID",this);
+  fInnerCollimatorUpstreamIDCmd->SetGuidance("Define a the length of the collimator");
+  fInnerCollimatorUpstreamIDCmd->SetParameterName("length",false);
+  fInnerCollimatorUpstreamIDCmd->SetUnitCategory("Length");
+  fInnerCollimatorUpstreamIDCmd->AvailableForStates(G4State_Idle);
+
+  fInnerCollimatorDownstreamIDCmd = new G4UIcmdWithADoubleAndUnit("/B1/det/setCollimatorDownstreamID",this);
+  fInnerCollimatorDownstreamIDCmd->SetGuidance("Define a the length of the collimator");
+  fInnerCollimatorDownstreamIDCmd->SetParameterName("length",false);
+  fInnerCollimatorDownstreamIDCmd->SetUnitCategory("Length");
+  fInnerCollimatorDownstreamIDCmd->AvailableForStates(G4State_Idle);
+
+  fCollimatorToothSlopeCmd = new G4UIcmdWithADouble("/B1/det/setCollimatorToothSlope",this);
   fCollimatorToothSlopeCmd->SetGuidance("Define a the slope of the saw tooth shape. Zero only produces a tube wouth out any teeth . ");
   fCollimatorToothSlopeCmd->SetParameterName("slope",false);
-  fCollimatorToothSlopeCmd->SetUnitCategory("Length");
   fCollimatorToothSlopeCmd->AvailableForStates(G4State_Idle);
 
   fInnerCollimatorODCmd = new G4UIcmdWithADoubleAndUnit("/B1/det/setInnerCollimatorOD",this);
@@ -98,9 +110,15 @@ void B1DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
    if( command == fCollimatorLengthCmd ) {
       fDetectorConstruction->SetCollimatorLength( G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValue));
    }
+   if( command == fInnerCollimatorUpstreamIDCmd ) {
+      fDetectorConstruction->SetInnerCollimatorUpstreamID( G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValue));
+   }
+   if( command == fInnerCollimatorDownstreamIDCmd ) {
+      fDetectorConstruction->SetInnerCollimatorDownstreamID( G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValue));
+   }
 
    if( command == fCollimatorToothSlopeCmd ) {
-      fDetectorConstruction->SetCollimatorToothSlope( G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValue));
+      fDetectorConstruction->SetCollimatorToothSlope( G4UIcmdWithADouble::GetNewDoubleValue(newValue));
    }
 
    if( command == fInnerCollimatorODCmd ) {

@@ -1,10 +1,10 @@
 #!/bin/bash
 
-num=5
-nevent=1000000
+num=6
+nevent=10000000
 
-mkdir -p results5
-cd results5
+mkdir -p results6
+cd results6
 
 # gold
 mat=Au
