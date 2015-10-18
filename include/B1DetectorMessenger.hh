@@ -32,10 +32,11 @@ class B1DetectorMessenger: public G4UImessenger
     G4UIdirectory*           fB1Directory;
     G4UIdirectory*           fDetDirectory;
 
-    G4UIcmdWithoutParameter    * fPrintConfigInfoCmd;
+    G4UIcmdWithoutParameter   * fPrintConfigInfoCmd;
     G4UIcmdWithAString        * fRadiatorMatCmd;
     G4UIcmdWithAString        * fCollimatorMatCmd;
     G4UIcmdWithADoubleAndUnit * fCollimatorLengthCmd;
+    G4UIcmdWithADoubleAndUnit * fCollimatorToothSlopeCmd;
     G4UIcmdWithADoubleAndUnit * fInnerCollimatorODCmd;
     G4UIcmdWithADoubleAndUnit * fRadiatorCollimatorGapCmd;
     G4UIcmdWithAString        * fTargMatCmd;
@@ -44,6 +45,5 @@ class B1DetectorMessenger: public G4UImessenger
     G4UIcmdWithADoubleAndUnit* fStepMaxCmd;
 };
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #endif

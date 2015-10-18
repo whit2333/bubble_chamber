@@ -39,6 +39,12 @@ B1DetectorMessenger::B1DetectorMessenger(B1DetectorConstruction* Det) :
   fCollimatorLengthCmd->SetUnitCategory("Length");
   fCollimatorLengthCmd->AvailableForStates(G4State_Idle);
 
+  fCollimatorToothSlopeCmd = new G4UIcmdWithADoubleAndUnit("/B1/det/setCollimatorToothSlope",this);
+  fCollimatorToothSlopeCmd->SetGuidance("Define a the slope of the saw tooth shape. Zero only produces a tube wouth out any teeth . ");
+  fCollimatorToothSlopeCmd->SetParameterName("slope",false);
+  fCollimatorToothSlopeCmd->SetUnitCategory("Length");
+  fCollimatorToothSlopeCmd->AvailableForStates(G4State_Idle);
+
   fInnerCollimatorODCmd = new G4UIcmdWithADoubleAndUnit("/B1/det/setInnerCollimatorOD",this);
   fInnerCollimatorODCmd->SetGuidance("Define a the OD of the inner collimator");
   fInnerCollimatorODCmd->SetParameterName("length",false);
@@ -67,13 +73,13 @@ B1DetectorMessenger::B1DetectorMessenger(B1DetectorConstruction* Det) :
   fStepMaxCmd->SetUnitCategory("Length");
   fStepMaxCmd->AvailableForStates(G4State_Idle);
 }
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+//______________________________________________________________________________
 
 B1DetectorMessenger::~B1DetectorMessenger()
 {
   delete fRadiatorMatCmd;
   delete fCollimatorLengthCmd;
+  delete fCollimatorToothSlopeCmd;
   delete fRadiatorCollimatorGapCmd;
   delete fTargMatCmd;
   delete fChamMatCmd;
@@ -81,29 +87,36 @@ B1DetectorMessenger::~B1DetectorMessenger()
   delete fB1Directory;
   delete fDetDirectory;
 }
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+//______________________________________________________________________________
 
 void B1DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 {
-  if( command == fCollimatorMatCmd )
-   { fDetectorConstruction->SetCollimatorMaterial(newValue);}
+   if( command == fCollimatorMatCmd ) {
+      fDetectorConstruction->SetCollimatorMaterial(newValue);
+   }
 
-  if( command == fCollimatorLengthCmd )
-   { fDetectorConstruction->SetCollimatorLength( G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValue));}
+   if( command == fCollimatorLengthCmd ) {
+      fDetectorConstruction->SetCollimatorLength( G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValue));
+   }
 
-  if( command == fInnerCollimatorODCmd )
-   { fDetectorConstruction->SetInnerCollimatorOD( G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValue));}
+   if( command == fCollimatorToothSlopeCmd ) {
+      fDetectorConstruction->SetCollimatorToothSlope( G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValue));
+   }
 
-  if( command == fPrintConfigInfoCmd )
-   { fDetectorConstruction->PrintConfigInfo();}
+   if( command == fInnerCollimatorODCmd ) {
+      fDetectorConstruction->SetInnerCollimatorOD( G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValue));
+   }
 
-  //if( command == fChamMatCmd )
-  // { fDetectorConstruction->SetChamberMaterial(newValue);}
+   if( command == fPrintConfigInfoCmd ) {
+      fDetectorConstruction->PrintConfigInfo();
+   }
 
-  //if( command == fStepMaxCmd ) {
-  //  fDetectorConstruction ->SetMaxStep(fStepMaxCmd->GetNewDoubleValue(newValue));
-  //}   
+   //if( command == fChamMatCmd )
+   // { fDetectorConstruction->SetChamberMaterial(newValue);}
+
+   //if( command == fStepMaxCmd ) {
+   //  fDetectorConstruction ->SetMaxStep(fStepMaxCmd->GetNewDoubleValue(newValue));
+   //}   
 }
+//______________________________________________________________________________
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

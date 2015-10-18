@@ -30,6 +30,7 @@ class B1DetectorConstruction : public G4VUserDetectorConstruction
       G4double collimator_OD                 ;
       G4double collimator_diameter           ;
       G4double collimator_z_end              ;
+      G4double collimator_tooth_slope;
       G4double radiator_collimator_gap ;
       G4double collimator_length   ;
       G4double beampipe_length   ;
@@ -116,6 +117,7 @@ class B1DetectorConstruction : public G4VUserDetectorConstruction
       void     SetRadiatorCollimatorGap(G4double l) ;
       void     SetCollimatorLength(G4double l) ;
       void     SetInnerCollimatorOD(G4double l) ;
+      void     SetCollimatorToothSlope(G4double l);
 
       void     PrintConfigInfo() const;
 
