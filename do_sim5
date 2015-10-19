@@ -1,0 +1,61 @@
+#!/bin/bash
+
+num=0
+nevent=10000000
+results_dirname=results9
+results_dir=/home/whit/exjpsi/whit/bub_run/${results_dirname}
+
+mkdir -p ${results_dirname}
+cd ${results_dir}
+
+col_up_id=10;
+col_down_id=10;
+
+lengths="5 10 15 20 30 40"
+ODs="15 25 30 40 60"
+materials="Au Ag Cu W Mo"
+#materials="W Mo"
+
+#------------------------------------------------------------------------------
+# gold
+for mat in ${materials}; do
+   mkdir -p $mat
+   cd $mat
+   for length in ${lengths}; do
+      for anOD in ${ODs}; do
+         tag=${mat}_${length}cm_${anOD}mm_${num}
+         filetemp=${tag}.mac
+         echo "/B1/det/setCollimatorLength ${length} cm" > $filetemp
+         echo "/B1/det/setInnerCollimatorOD ${anOD} mm" >> $filetemp
+         echo "/B1/det/setCollimatorMaterial G4_${mat}" >> $filetemp
+         echo "/B1/det/setCollimatorUpstreamID ${col_up_id} mm" >> $filetemp
+         echo "/B1/det/setCollimatorDownstreamID ${col_down_id} mm" >> $filetemp
+         echo "/process/setVerbose 0 all" >> $filetemp
+         echo "/vis/verbose 0" >> $filetemp
+         echo "/control/verbose 0" >> $filetemp
+         echo "/run/verbose 0" >> $filetemp
+         echo "/event/verbose 0" >> $filetemp
+         echo "/tracking/verbose 0" >> $filetemp
+         echo "/run/initialize" >> $filetemp
+         echo "/run/beamOn ${nevent}" >> $filetemp
+         echo "/B1/det/printConfigInfo" >> $filetemp
+
+         scriptname=bub_${tag}
+         scriptfile=${results_dir}/${mat}/${scriptname}
+         echo '#!/bin/bash '                 > $scriptfile
+         echo 'source /home/whit/.bashrc ;' >> $scriptfile
+         echo "cd ${results_dir}/${mat}   "  >> $scriptfile
+         echo "../../bin/ebl1 -b --run=$num  $filetemp &> ${tag}.log " >> $scriptfile
+         echo "mv EBL_sim_output_${num}.root bubble_${mat}_${length}cm_${anOD}mm_${num}.root" >> $scriptfile
+         echo "root -b -q \"../../make_plots.cxx(\\\"${mat}\\\",${length},${num},${anOD})\"" >> $scriptfile
+         chmod +x ${scriptfile}
+
+         auger_file=auger_${tag}.txt
+         auger_bubble_config "${scriptfile}" > ${auger_file}
+         jsub ${auger_file}
+         num=$((num+1))
+      done
+   done
+   cd ..
+done
+
