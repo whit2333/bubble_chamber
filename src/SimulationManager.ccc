@@ -1,0 +1,117 @@
+#include "SimulationManager.hh"
+#include "G4SDmessenger.hh"
+#include "G4ios.hh"
+
+
+G4ThreadLocal SimulationManager* SimulationManager::fSDManager = 0;
+
+SimulationManager* SimulationManager::GetSDMpointer()
+{
+  if(!fSDManager)
+  {
+    fSDManager = new SimulationManager;
+  }
+  return fSDManager;
+}
+
+//SimulationManager* SimulationManager::GetSDMpointerIfExist()
+//{ return fSDManager; }
+
+SimulationManager::SimulationManager():verboseLevel(0)
+{
+  G4String topName = "/";
+  treeTop = new G4SDStructure(topName);
+  theMessenger = new G4SDmessenger(this);
+  HCtable = new G4HCtable;
+}
+
+SimulationManager::~SimulationManager()
+{
+  delete theMessenger;
+  delete HCtable;
+  delete treeTop;
+}
+
+void SimulationManager::AddNewDetector(G4VSensitiveDetector*aSD)
+{
+  G4int numberOfCollections = aSD->GetNumberOfCollections();
+  G4String pathName = aSD->GetPathName();
+  if( pathName(0) != '/' ) pathName.prepend("/");
+  if( pathName(pathName.length()-1) != '/' ) pathName += "/";
+  treeTop->AddNewDetector(aSD,pathName);
+  if(numberOfCollections<1) return;
+  for(G4int i=0;i<numberOfCollections;i++)
+  {
+    G4String SDname = aSD->GetName();
+    G4String DCname = aSD->GetCollectionName(i);
+    AddNewCollection(SDname,DCname);
+  }
+  if( verboseLevel > 0 )
+  {
+    G4cout << "New sensitive detector <" << aSD->GetName()
+         << "> is registored at " << pathName << G4endl;
+  }
+}
+
+void SimulationManager::AddNewCollection(G4String SDname,G4String DCname)
+{
+  G4int i = HCtable->Registor(SDname,DCname);
+  if(verboseLevel>0)
+  {
+    if(i<0) {
+       if(verboseLevel>1) G4cout << "SimulationManager::AddNewCollection : the collection <"
+        << SDname << "/" << DCname << "> has already been reginstered." << G4endl;
+    }
+    else
+    {
+      G4cout << "SimulationManager::AddNewCollection : the collection <"
+       << SDname << "/" << DCname << "> is registered at " << i << G4endl;
+    }
+  }
+}
+
+G4HCofThisEvent* SimulationManager::PrepareNewEvent()
+{
+  G4HCofThisEvent* HCE = new G4HCofThisEvent(HCtable->entries());
+  treeTop->Initialize(HCE);
+  return HCE;
+}
+
+void SimulationManager::TerminateCurrentEvent(G4HCofThisEvent* HCE)
+{
+  treeTop->Terminate(HCE);
+}
+
+void SimulationManager::Activate(G4String dName, G4bool activeFlag)
+{
+  G4String pathName = dName;
+  if( pathName(0) != '/' ) pathName.prepend("/");
+  treeTop->Activate(pathName,activeFlag);
+}
+
+G4VSensitiveDetector* SimulationManager::FindSensitiveDetector(G4String dName, G4bool warning)
+{
+  G4String pathName = dName;
+  if( pathName(0) != '/' ) pathName.prepend("/");
+  return treeTop->FindSensitiveDetector(pathName, warning);
+}
+
+G4int SimulationManager::GetCollectionID(G4String colName)
+{
+  G4int id = HCtable->GetCollectionID(colName);
+  if(id==-1)
+  { G4cout << "<" << colName << "> is not found." << G4endl; }
+  else if(id==-2)
+  { G4cout << "<" << colName << "> is ambiguous." << G4endl; }
+  return id;
+}
+
+G4int SimulationManager::GetCollectionID(G4VHitsCollection* aHC)
+{
+  G4String HCname = aHC->GetSDname();
+  HCname += "/";
+  HCname += aHC->GetName();
+  return GetCollectionID(HCname);
+}
+
+
