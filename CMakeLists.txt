@@ -3,14 +3,19 @@
 #----------------------------------------------------------------------------
 # Setup the project
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
-project(EBLSIM)
+project(BUBBLESIM)
 
-SET(EBLSIM_MAJOR_VERSION 0)
-SET(EBLSIM_MINOR_VERSION 0)
-SET(EBLSIM_PATCH_VERSION 0)
-set(EBLSIM_VERSION ${EBLSIM_MAJOR_VERSION}.${EBLSIM_MINOR_VERSION}.${EBLSIM_PATCH_VERSION})
+SET(BUBBLESIM_MAJOR_VERSION 0)
+SET(BUBBLESIM_MINOR_VERSION 0)
+SET(BUBBLESIM_PATCH_VERSION 0)
+set(BUBBLESIM_VERSION ${BUBBLESIM_MAJOR_VERSION}.${BUBBLESIM_MINOR_VERSION}.${BUBBLESIM_PATCH_VERSION})
 
-SET(EBLSIM_MACRO_DIR ${CMAKE_INSTALL_PREFIX}/share/${PROJECT_NAME} )
+SET(MACRO_DIR    share/${PROJECT_NAME})
+SET(GEOMETRY_DIR share/${PROJECT_NAME}/geometry_files)
+
+SET(BUBBLESIM_MACRO_DIR ${CMAKE_INSTALL_PREFIX}/${MACRO_DIR} )
+SET(BUBBLESIM_GEOMETRY_DIR ${CMAKE_INSTALL_PREFIX}/${GEOMETRY_DIR} )
+
 
 #set(CMAKE_CXX_FLAGS "-g3 ${CMAKE_CXX_FLAGS} ")
 
@@ -58,7 +63,7 @@ include_directories(
 # NB: headers are included so they will show up in IDEs
 #
 file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
-file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh ${PROJECT_BINARY_DIR}/EBLsim.h)
+file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh ${PROJECT_BINARY_DIR}/BUBBLESIM.h)
 
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 libraries
@@ -75,7 +80,7 @@ target_link_libraries(bubble_chamber ${Geant4_LIBRARIES} ${cadmesh_LIBRARIES})
 # For internal Geant4 use - but has no effect if you build this
 # example standalone
 #
-add_custom_target(EBLSIM DEPENDS bubble_chamber)
+add_custom_target(BUBBLESIM DEPENDS bubble_chamber)
 
 #----------------------------------------------------------------------------
 # Copy all scripts to the build directory, i.e. the directory in which we
@@ -99,7 +104,11 @@ foreach(_script ${EXAMPLEB1_SCRIPTS})
     COPYONLY
     )
 endforeach()
-install(FILES ${EXAMPLEB1_SCRIPTS} DESTINATION "${CMAKE_INSTALL_PREFIX}/share/${PROJECT_NAME}/examples" )
+install(FILES ${EXAMPLEB1_SCRIPTS} 
+  DESTINATION "${CMAKE_INSTALL_PREFIX}/share/${PROJECT_NAME}/examples" )
+
+install(DIRECTORY  ${PROJECT_SOURCE_DIR}/geometry_files
+  DESTINATION share/${PROJECT_NAME} )
 
 
 #----------------------------------------------------------------------------
@@ -112,7 +121,7 @@ install(TARGETS bubble_chamber DESTINATION bin)
 # Configured files 
 # These files end with ".in" which is removed when installed
 set(EXAMPLEB1_CONF_FILES
-  EBLsim.h
+  BubbleChamberSim.h
   init_default.mac
   #vis.mac
   )

@@ -1,6 +1,7 @@
 #include "B1DetectorConstruction.hh"
 #include "B1DetectorMessenger.hh"
 
+#include "BubbleChamberSim.h"
 #include "G4Material.hh"
 #include "G4PhysicalConstants.hh"
 #include "G4SystemOfUnits.hh"
@@ -278,7 +279,7 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
    blue      = 200.0/256.0;
    alpha     = 0.4;
 
-   auto flange_mesh = CADMesh::TessellatedMesh::FromPLY("../../design_files/plug_flange_beam_port_mod.ply");
+   auto flange_mesh = CADMesh::TessellatedMesh::FromPLY(BUBBLESIM_GEOMETRY_DIR "/plug_flange_beam_port_mod.ply");
    flange_mesh->SetScale( mm );
    flange_mesh->SetOffset( chamber_port_flange_offset );
 
@@ -299,7 +300,7 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
    blue      = 1.0/256.0;
    alpha     = 0.4;
 
-   auto mesh = CADMesh::TessellatedMesh::FromPLY("../../design_files/internal_coll_and_port.ply");
+   auto mesh = CADMesh::TessellatedMesh::FromPLY(BUBBLESIM_GEOMETRY_DIR "/internal_coll_and_port.ply");
    mesh->SetScale( mm );
    mesh->SetOffset( chamber_port_offset );
 
@@ -321,7 +322,7 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
    blue      = 0.0/256.0;
    alpha     = 0.4;
 
-   auto mesh2 = CADMesh::TessellatedMesh::FromPLY("../../design_files/collimator_silver_insert.ply");
+   auto mesh2 = CADMesh::TessellatedMesh::FromPLY(BUBBLESIM_GEOMETRY_DIR "/collimator_silver_insert.ply");
    mesh2->SetScale( mm );
    mesh2->SetOffset( port_collimator_offset );
 

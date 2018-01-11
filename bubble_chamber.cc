@@ -1,4 +1,4 @@
-#include "EBLsim.h"
+#include "BubbleChamberSim.h"
 #include "B1DetectorConstruction.hh"
 #include "B1ActionInitialization.hh"
 #include "G4SystemOfUnits.hh"
@@ -34,7 +34,7 @@ bool fexists(const std::string& filename) {
 
 void print_help() {
 
-   std::cout << "usage: ebl_1 [options] [macro file]    \n";
+   std::cout << "usage: bubble_chamber [options] [macro file]    \n";
    std::cout << "Options:                               \n";
    std::cout << "    --run=#, -r         set file \"run\" number\n";
    std::cout << "    --gui=#, -g         set to 1 (default) to use qt gui or\n";
@@ -249,7 +249,7 @@ int main(int argc,char** argv)
 
       // interactive mode
       G4String command   = "/control/macroPath ";
-      G4String mac_dir   = EBLSIM_MACRO_DIR;
+      G4String mac_dir   = BUBBLESIM_MACRO_DIR;
       G4String fileName = "init_default.mac";
 
       std::cout << " executing " << command+mac_dir << std::endl;

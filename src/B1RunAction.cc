@@ -69,7 +69,7 @@ void B1RunAction::BeginOfRunAction(const G4Run*)
 
    // Open an output file
    ss file_name;
-   file_name << "EBL_sim_output_" << fRunNumber;
+   file_name << "bubble_sim_" << fRunNumber;
    analysisManager->OpenFile(file_name.str().c_str());
 }
 //______________________________________________________________________________
