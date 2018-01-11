@@ -40,28 +40,17 @@ B1DetectorMessenger::B1DetectorMessenger(B1DetectorConstruction* Det) :
   fCollimatorLengthCmd->SetUnitCategory("Length");
   fCollimatorLengthCmd->AvailableForStates(G4State_Idle);
 
-  fInnerCollimatorUpstreamIDCmd = new G4UIcmdWithADoubleAndUnit("/B1/det/setCollimatorUpstreamID",this);
-  fInnerCollimatorUpstreamIDCmd->SetGuidance("Define a the length of the collimator");
-  fInnerCollimatorUpstreamIDCmd->SetParameterName("length",false);
-  fInnerCollimatorUpstreamIDCmd->SetUnitCategory("Length");
-  fInnerCollimatorUpstreamIDCmd->AvailableForStates(G4State_Idle);
+  fCollimatorIDCmd = new G4UIcmdWithADoubleAndUnit("/B1/det/setCollimatorID",this);
+  fCollimatorIDCmd->SetGuidance("Define a the inner diameter of the collimator");
+  fCollimatorIDCmd->SetParameterName("length",false);
+  fCollimatorIDCmd->SetUnitCategory("Length");
+  fCollimatorIDCmd->AvailableForStates(G4State_Idle);
 
-  fInnerCollimatorDownstreamIDCmd = new G4UIcmdWithADoubleAndUnit("/B1/det/setCollimatorDownstreamID",this);
-  fInnerCollimatorDownstreamIDCmd->SetGuidance("Define a the length of the collimator");
-  fInnerCollimatorDownstreamIDCmd->SetParameterName("length",false);
-  fInnerCollimatorDownstreamIDCmd->SetUnitCategory("Length");
-  fInnerCollimatorDownstreamIDCmd->AvailableForStates(G4State_Idle);
-
-  fCollimatorToothSlopeCmd = new G4UIcmdWithADouble("/B1/det/setCollimatorToothSlope",this);
-  fCollimatorToothSlopeCmd->SetGuidance("Define a the slope of the saw tooth shape. Zero only produces a tube wouth out any teeth . ");
-  fCollimatorToothSlopeCmd->SetParameterName("slope",false);
-  fCollimatorToothSlopeCmd->AvailableForStates(G4State_Idle);
-
-  fInnerCollimatorODCmd = new G4UIcmdWithADoubleAndUnit("/B1/det/setInnerCollimatorOD",this);
-  fInnerCollimatorODCmd->SetGuidance("Define a the OD of the inner collimator");
-  fInnerCollimatorODCmd->SetParameterName("length",false);
-  fInnerCollimatorODCmd->SetUnitCategory("Length");
-  fInnerCollimatorODCmd->AvailableForStates(G4State_Idle);
+  fCollimatorODCmd = new G4UIcmdWithADoubleAndUnit("/B1/det/setCollimatorOD",this);
+  fCollimatorODCmd->SetGuidance("Define a the OD of the collimator");
+  fCollimatorODCmd->SetParameterName("length",false);
+  fCollimatorODCmd->SetUnitCategory("Length");
+  fCollimatorODCmd->AvailableForStates(G4State_Idle);
 
   fRadiatorCollimatorGapCmd = new G4UIcmdWithADoubleAndUnit("/B1/det/setRadiatorCollimatorGap",this);
   fRadiatorCollimatorGapCmd->SetGuidance("Define a the space between the end of the radiator and the face of the collimator.");
@@ -91,7 +80,6 @@ B1DetectorMessenger::~B1DetectorMessenger()
 {
   delete fRadiatorMatCmd;
   delete fCollimatorLengthCmd;
-  delete fCollimatorToothSlopeCmd;
   delete fRadiatorCollimatorGapCmd;
   delete fTargMatCmd;
   delete fChamMatCmd;
@@ -110,19 +98,12 @@ void B1DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
    if( command == fCollimatorLengthCmd ) {
       fDetectorConstruction->SetCollimatorLength( G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValue));
    }
-   if( command == fInnerCollimatorUpstreamIDCmd ) {
-      fDetectorConstruction->SetInnerCollimatorUpstreamID( G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValue));
-   }
-   if( command == fInnerCollimatorDownstreamIDCmd ) {
-      fDetectorConstruction->SetInnerCollimatorDownstreamID( G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValue));
+   if( command == fCollimatorIDCmd ) {
+      fDetectorConstruction->SetCollimatorID( G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValue));
    }
 
-   if( command == fCollimatorToothSlopeCmd ) {
-      fDetectorConstruction->SetCollimatorToothSlope( G4UIcmdWithADouble::GetNewDoubleValue(newValue));
-   }
-
-   if( command == fInnerCollimatorODCmd ) {
-      fDetectorConstruction->SetInnerCollimatorOD( G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValue));
+   if( command == fCollimatorODCmd ) {
+      fDetectorConstruction->SetCollimatorOD( G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValue));
    }
 
    if( command == fPrintConfigInfoCmd ) {

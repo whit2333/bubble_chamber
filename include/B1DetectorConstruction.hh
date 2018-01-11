@@ -3,6 +3,7 @@
 
 #include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"
+#include "G4SystemOfUnits.hh"
 
 class G4VPhysicalVolume;
 class G4LogicalVolume;
@@ -19,30 +20,31 @@ class B1DetectorConstruction : public G4VUserDetectorConstruction
 {
    private:
 
-      G4double world_x                       ;
-      G4double world_y                       ;
-      G4double world_z                       ;
-      G4double radiator_thickness            ;
-      G4double collimator_target_center_gap  ;
-      G4double outer_collimator_ID           ;
-      G4double outer_collimator_OD           ;
-      G4double collimator_downstream_ID      ;
-      G4double collimator_upstream_ID        ;
-      G4double collimator_OD                 ;
-      G4double collimator_diameter           ;
-      G4double collimator_z_end              ;
-      G4double collimator_tooth_slope;
-      G4double radiator_collimator_gap ;
-      G4double collimator_length   ;
-      G4double beampipe_length   ;
-      G4double beampipe_diameter ;
-      G4double radiator_diameter ;
-      G4double scoring_diameter  ;
-      G4double scoring_length    ;
-      G4double window_diameter   ;
-      G4double window_thickness  ;
-      G4double scoring2_diameter ;
-      G4double scoring2_length   ;
+      G4double world_x                        = 1.0*m        ;
+      G4double world_y                        = 1.0*m        ;
+      G4double world_z                        = 2.0*m        ;
+      G4double radiator_thickness             = 6.0*mm       ;
+      G4double radiator_collimator_gap        = 1.0*mm       ; // ?
+      G4double collimator_OD                  = 4.0*2.54*cm  ;
+      G4double collimator_ID                  = 0.315*2.54*cm;
+      G4double collimator_z_end               = 0.0*cm       ;
+      G4double collimator_length              = 6.0*2.54*cm  ;
+      G4double collimator_target_center_gap   = 4.0*cm       ;
+      G4double collimator_chamber_port_gap    = 2.0*mm       ; // ?
+      G4double chamber_port_length            = 15.24*cm ;
+      G4double chamber_port_flange_length     =  7.62*cm ;
+      G4double chamber_flange_port_offset     =  3.17*mm ;
+      G4double collimator_insert_length       = 10.16*cm ;
+
+      G4double beampipe_length              = 20.0*cm ;
+      G4double beampipe_diameter            = 8.0*cm  ;
+      G4double radiator_diameter            = 8.0*cm  ;
+      G4double scoring_diameter             = 1.5*2.54*cm ;
+      G4double scoring_length               = 0.01*mm ;
+      G4double window_diameter              = 1.0*cm  ;
+      G4double window_thickness             = 8.0*mm  ;
+      G4double scoring2_diameter            = 1.5*2.54*cm ;
+      G4double scoring2_length              = 0.01*mm ;
 
    protected:
       G4LogicalVolume     * fScoringVolume;
@@ -72,21 +74,34 @@ class B1DetectorConstruction : public G4VUserDetectorConstruction
       G4VSolid          * radiator_solid;
       G4LogicalVolume   * radiator_log  ;
       G4VPhysicalVolume * radiator_phys ;
+
       G4ThreeVector       collimator_pos;
       G4Material        * collimator_mat ;  
       G4VSolid          * collimator_solid ;
       G4LogicalVolume   * collimator_log ;  
       G4VPhysicalVolume * collimator_phys;  
-      G4ThreeVector       collimator2_pos;
-      G4Material        * collimator2_mat ;  
-      G4VSolid          * collimator2_solid ;
-      G4LogicalVolume   * collimator2_log ;  
-      G4VPhysicalVolume * collimator2_phys;  
-      G4ThreeVector       outer_collimator_pos;
-      G4Material        * outer_collimator_mat ;  
-      G4VSolid          * outer_collimator_solid ;
-      G4LogicalVolume   * outer_collimator_log ;  
-      G4VPhysicalVolume * outer_collimator_phys;  
+
+      G4ThreeVector       port_collimator_pos;
+      G4ThreeVector       port_collimator_offset;
+      G4Material        * port_collimator_mat ;  
+      G4VSolid          * port_collimator_solid ;
+      G4LogicalVolume   * port_collimator_log ;  
+      G4VPhysicalVolume * port_collimator_phys;  
+
+      G4ThreeVector       chamber_port_flange_pos;
+      G4ThreeVector       chamber_port_flange_offset; // for mesh importing
+      G4Material        * chamber_port_flange_mat ;  
+      G4VSolid          * chamber_port_flange_solid ;
+      G4LogicalVolume   * chamber_port_flange_log ;  
+      G4VPhysicalVolume * chamber_port_flange_phys;  
+
+      G4ThreeVector       chamber_port_pos;
+      G4ThreeVector       chamber_port_offset; // for mesh importing
+      G4Material        * chamber_port_mat ;  
+      G4VSolid          * chamber_port_solid ;
+      G4LogicalVolume   * chamber_port_log ;  
+      G4VPhysicalVolume * chamber_port_phys;  
+
       G4ThreeVector       scoring_pos;
       G4Material        * scoring_mat   ;
       G4VSolid          * scoring_solid ;
@@ -117,10 +132,8 @@ class B1DetectorConstruction : public G4VUserDetectorConstruction
 
       void     SetRadiatorCollimatorGap(G4double l) ;
       void     SetCollimatorLength(G4double l) ;
-      void     SetInnerCollimatorOD(G4double l) ;
-      void     SetCollimatorToothSlope(G4double l);
-      void     SetInnerCollimatorUpstreamID(G4double l) ;
-      void     SetInnerCollimatorDownstreamID(G4double l) ;
+      void     SetCollimatorOD(G4double l) ;
+      void     SetCollimatorID(G4double l) ;
 
       void     PrintConfigInfo() const;
 

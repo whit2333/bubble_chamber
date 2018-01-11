@@ -38,6 +38,10 @@ endif()
 #include_directories(${CMAKE_SOURCE_DIR} ${ROOT_INCLUDE_DIRS})
 #add_definitions(${ROOT_CXX_FLAGS})
 
+
+# CADMesh
+find_package(cadmesh REQUIRED)
+
 #----------------------------------------------------------------------------
 # Setup Geant4 include directories and compile definitions
 # Setup include directory for this project
@@ -45,7 +49,8 @@ endif()
 include(${Geant4_USE_FILE})
 include_directories(
    ${PROJECT_SOURCE_DIR}/include
-   ${PROJECT_BINARY_DIR})
+   ${PROJECT_BINARY_DIR}
+   )
 
 
 #----------------------------------------------------------------------------
@@ -58,17 +63,19 @@ file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh ${PROJECT_BINARY_DIR}/EBLsi
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 libraries
 #
-add_executable(exampleB1 exampleB1.cc ${sources} ${headers})
-target_link_libraries(exampleB1 ${Geant4_LIBRARIES} )
+#add_executable(exampleB1 exampleB1.cc ${sources} ${headers})
+#target_include_directories(exampleB1 PUBLIC ${CADMESH_INCLUDE_DIRS} )
+#target_link_libraries(exampleB1 ${Geant4_LIBRARIES} ${cadmesh_LIBRARIES} )
 
-add_executable(ebl1 ebl_1.cc ${sources} ${headers})
-target_link_libraries(ebl1 ${Geant4_LIBRARIES})
+add_executable(bubble_chamber bubble_chamber.cc ${sources} ${headers})
+target_include_directories(bubble_chamber PUBLIC ${CADMESH_INCLUDE_DIRS} )
+target_link_libraries(bubble_chamber ${Geant4_LIBRARIES} ${cadmesh_LIBRARIES})
 
 #----------------------------------------------------------------------------
 # For internal Geant4 use - but has no effect if you build this
 # example standalone
 #
-add_custom_target(EBLSIM DEPENDS exampleB1 ebl1)
+add_custom_target(EBLSIM DEPENDS bubble_chamber)
 
 #----------------------------------------------------------------------------
 # Copy all scripts to the build directory, i.e. the directory in which we
@@ -82,6 +89,8 @@ set(EXAMPLEB1_SCRIPTS
   examples/run1.mac
   examples/run2.mac
   examples/vis.mac
+  examples/vis2.mac
+  examples/trajectory_model.mac
   )
 foreach(_script ${EXAMPLEB1_SCRIPTS})
   configure_file(
@@ -96,8 +105,8 @@ install(FILES ${EXAMPLEB1_SCRIPTS} DESTINATION "${CMAKE_INSTALL_PREFIX}/share/${
 #----------------------------------------------------------------------------
 # Install the executable to 'bin' directory under CMAKE_INSTALL_PREFIX
 #
-install(TARGETS exampleB1 DESTINATION bin)
-install(TARGETS ebl1 DESTINATION bin)
+#install(TARGETS exampleB1 DESTINATION bin)
+install(TARGETS bubble_chamber DESTINATION bin)
 
 # ----------------------------------------------------------------------------
 # Configured files 
@@ -114,7 +123,7 @@ endforeach()
 
 
 ## Add all targets to the build-tree export set
-export(TARGETS exampleB1 FILE "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Targets.cmake")
+export(TARGETS bubble_chamber FILE "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Targets.cmake")
 #
 ## Export the package for use from the build-tree
 ## (this registers the build-tree with a global CMake-registry)

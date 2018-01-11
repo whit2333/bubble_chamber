@@ -44,7 +44,7 @@ void B1PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
    // on DetectorConstruction class we get Envelope volume
    // from G4LogicalVolumeStore.
 
-   G4double envSizeXY = 2.0*mm;
+   G4double envSizeXY = 0.5*mm;
    G4double envSizeZ  = 0.0*nm;
 
    //if (!fEnvelopeBox)

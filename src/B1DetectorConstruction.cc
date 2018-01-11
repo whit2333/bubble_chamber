@@ -4,6 +4,7 @@
 #include "G4Material.hh"
 #include "G4PhysicalConstants.hh"
 #include "G4SystemOfUnits.hh"
+#include "globals.hh"
 
 #include "G4RunManager.hh"
 #include "G4NistManager.hh"
@@ -19,41 +20,39 @@
 #include "G4VisAttributes.hh"
 #include "G4UserLimits.hh"
 #include "FakeSD.hh"
+#include "CADMesh.hh"
+
 
 //___________________________________________________________________
 
 
 B1DetectorConstruction::B1DetectorConstruction() : 
    G4VUserDetectorConstruction(), 
-   world_x                      ( 1.0*m                  ),
-   world_y                      ( 1.0*m                  ),
-   world_z                      ( 1.0*m                  ),
-   radiator_thickness           ( 6.0*mm                 ),
-   collimator_target_center_gap ( 4.0*cm                 ),
-   collimator_upstream_ID       ( 1.0*cm                 ),
-   collimator_downstream_ID     ( 1.0*cm                 ),
-   collimator_OD                ( 2.54*cm                ),
-   outer_collimator_ID          ( 2.54*cm                ),
-   outer_collimator_OD          ( 4.0*2.54*cm            ),
-   collimator_diameter          ( 8.0*cm            ),
-   collimator_z_end             ( 0.0*cm            ),
-   collimator_tooth_slope       ( 0.0*cm),
-   radiator_collimator_gap      ( 1.0*mm                 ),
-   collimator_length            ( 4.0*cm                 ),
-   beampipe_length              ( 20.0*cm ),
-   beampipe_diameter            ( 8.0*cm  ),
-   radiator_diameter            ( 8.0*cm  ),
-   scoring_diameter             ( 20.0*cm ),
-   scoring_length               ( 0.01*mm    ),
-   window_diameter              ( 1.0*cm  ),
-   window_thickness             ( 8.0*mm  ),
-   scoring2_diameter            ( 20.0*cm ),
-   scoring2_length              ( 0.01*mm    ),
+   //world_x                      ( 1.0*m                  ),
+   //world_y                      ( 1.0*m                  ),
+   //world_z                      ( 2.0*m                  ),
+   //radiator_thickness           ( 6.0*mm                 ),
+   //radiator_collimator_gap      ( 1.0*mm                 ),
+   //collimator_OD                ( 4.0*2.54*cm            ),
+   //collimator_ID                ( 0.315*2.54*cm          ),
+   //collimator_z_end             ( 0.0*cm            ),
+   //collimator_length            ( 6.0*2.54*cm                 ),
+   //collimator_target_center_gap ( 4.0*cm                 ),
+   //beampipe_length              ( 20.0*cm ),
+   //beampipe_diameter            ( 8.0*cm  ),
+   //radiator_diameter            ( 8.0*cm  ),
+   //scoring_diameter             ( 20.0*cm ),
+   //scoring_length               ( 0.01*mm    ),
+   //window_diameter              ( 1.0*cm  ),
+   //window_thickness             ( 8.0*mm  ),
+   //scoring2_diameter            ( 20.0*cm ),
+   //scoring2_length              ( 0.01*mm    ),
    fScoringVolume               ( 0),
    fHasBeenBuilt(false)
 {
    fMessenger = new B1DetectorMessenger(this);
    fCollimatorMatName = "G4_Cu";
+
    scoring_det      = 0;
    scoring2_det     = 0;
 
@@ -70,18 +69,27 @@ B1DetectorConstruction::B1DetectorConstruction() :
    radiator_solid   = 0;
    radiator_log     = 0;
    radiator_phys    = 0;
+
    collimator_mat   = 0;
    collimator_solid = 0;
    collimator_log   = 0;
    collimator_phys  = 0;
-   collimator2_mat   = 0;
-   collimator2_solid = 0;
-   collimator2_log   = 0;
-   collimator2_phys  = 0;
-   outer_collimator_mat   = 0;
-   outer_collimator_solid = 0;
-   outer_collimator_log   = 0;
-   outer_collimator_phys  = 0;
+
+   chamber_port_flange_mat    = nullptr;  
+   chamber_port_flange_solid  = nullptr;
+   chamber_port_flange_log    = nullptr;  
+   chamber_port_flange_phys   = nullptr;  
+
+   chamber_port_mat    = nullptr;  
+   chamber_port_solid  = nullptr;
+   chamber_port_log    = nullptr;  
+   chamber_port_phys   = nullptr;  
+
+   port_collimator_mat    = nullptr;  
+   port_collimator_solid  = nullptr;
+   port_collimator_log    = nullptr;  
+   port_collimator_phys   = nullptr;  
+
    scoring_mat      = 0;
    scoring_solid    = 0;
    scoring_log      = 0;
@@ -112,15 +120,41 @@ void B1DetectorConstruction::Rebuild()
 
 void B1DetectorConstruction::CalculatePositions()
 {
-   beampipe_pos     = { 0, 0, -beampipe_length/2.0 - radiator_thickness/2.0 };
-   radiator_pos     = { 0, 0, 0.0 };
-   collimator_pos   = { 0, 0, collimator_length/4.0 + radiator_thickness/2.0 + radiator_collimator_gap };
-   collimator2_pos   = { 0, 0, 3.0*collimator_length/4.0 + radiator_thickness/2.0 + radiator_collimator_gap };
-   outer_collimator_pos   = { 0, 0, collimator_length/2.0 + radiator_thickness/2.0 + radiator_collimator_gap };
-   collimator_z_end = collimator_length + radiator_thickness/2.0 + radiator_collimator_gap;
-   scoring_pos      = { 0, 0, radiator_thickness/2.0 + radiator_collimator_gap/2.0 };
-   window_pos       = { 0, 0, collimator_z_end - window_thickness/2.0 };
-   scoring2_pos     = { 0, 0, collimator_z_end + collimator_target_center_gap };
+   beampipe_pos         = { 0, 0, -beampipe_length/2.0 - radiator_thickness/2.0 };
+   radiator_pos         = { 0, 0, 0.0 };
+   collimator_pos       = { 0, 0, collimator_length/2.0 + radiator_thickness/2.0 + radiator_collimator_gap };
+   collimator_z_end     = collimator_length + radiator_thickness/2.0 + radiator_collimator_gap;
+
+   // Chamber port flange is the outer part that holds the port
+   chamber_port_flange_pos = { 0, 0, radiator_thickness/2.0
+                                  + radiator_collimator_gap
+                                  + collimator_length
+                                  + collimator_chamber_port_gap
+                                  + 0.0*chamber_port_flange_length/2.0 };
+   chamber_port_flange_offset = {0,0, 0.0*chamber_port_flange_length/2.0 };
+
+   // Chamber port is the part which has the window to the chamber and holds the
+   // insert
+   chamber_port_pos = { 0, 0, radiator_thickness/2.0
+                                  + radiator_collimator_gap
+                                  + collimator_length
+                                  + collimator_chamber_port_gap
+                                  + chamber_flange_port_offset // the port face is recessed by a few mm from the flange face
+                                  + 0.0*chamber_port_length/2.0 };
+   chamber_port_offset = {0,0, 0.0*chamber_port_length/2.0 };
+
+   // The collimator insert
+   port_collimator_pos  = { 0, 0, radiator_thickness/2.0
+                                  + radiator_collimator_gap
+                                  + collimator_length
+                                  + collimator_chamber_port_gap
+                                  + chamber_flange_port_offset // the port face is recessed by a few mm from the flange face
+                                  + 0.0*collimator_insert_length/2.0 };
+   port_collimator_offset = {0,0, 0.0*collimator_insert_length/2.0 };
+
+   scoring_pos          = { 0, 0, radiator_thickness/2.0 + radiator_collimator_gap/2.0 };
+   window_pos           = { 0, 0, collimator_z_end - window_thickness/2.0 };
+   scoring2_pos         = { 0, 0, collimator_z_end + collimator_target_center_gap };
 }
 //______________________________________________________________________________
 G4VPhysicalVolume* B1DetectorConstruction::Construct()
@@ -183,12 +217,10 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
    blue      = 192.0/256.0;
    alpha     = 0.4;
 
-
    if(!beampipe_mat)   beampipe_mat   = new G4Material("beampipe_mat", /*z=*/1.0, /*a=*/1.01*g/mole, density, kStateGas,temperature,pressure);
    if(!beampipe_solid) beampipe_solid  = new G4Tubs("beampipe_solid", 0.0, beampipe_diameter/2.0, beampipe_length/2.0, 0.0, 360.*deg );
    if(!beampipe_log  ) beampipe_log   = new G4LogicalVolume(beampipe_solid, beampipe_mat,"beampipe_log");
    if(!beampipe_phys ) beampipe_phys  = new G4PVPlacement(0,beampipe_pos, beampipe_log, "beampipe_phys",world_log,false,0,checkOverlaps);                                  
-
    G4Colour            beampipe_color {red, green, blue, alpha };   // Gray 
    G4VisAttributes   * beampipe_vis   = new G4VisAttributes(beampipe_color);
    beampipe_log->SetVisAttributes(beampipe_vis);
@@ -218,37 +250,19 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
    //scoring_log->SetUserLimits(scoring_limits);
 
    // ------------------------------------------------------------------------
-   // Inner Collimator 
+   // Collimator 
    // ------------------------------------------------------------------------
-   // Part I : Upstream inner cone 
    red       = 250.0/256.0;
    green     = 0.0/256.0;
    blue      = 1.0/256.0;
    alpha     = 0.4;
-
-   // For later use:
-   double N_teeth = 2.0;
-   // change in the radius
-   double delta_r = (collimator_downstream_ID-collimator_upstream_ID)/2.0;
-   collimator_tooth_slope = delta_r/(collimator_length/N_teeth);
-
-   //// check that the upstream ID is not less than zero
-   //if(collimator_ID - delta_r < 0 ){
-   //   std::cout << "Warning: invalid collimator tooth slope!\n";
-   //   delta_r = collimator_ID;
-   //   collimator_tooth_slope = delta_r/(collimator_length/N_teeth);
-   //}
-
 
    if(collimator_phys)  delete collimator_phys;
    if(collimator_log)   delete collimator_log;
    if(collimator_solid) delete collimator_solid;
 
    collimator_mat   = nist->FindOrBuildMaterial(fCollimatorMatName);
-   collimator_solid = new G4Cons( "collimator_solid", 
-         (collimator_upstream_ID)/2.0, collimator_OD/2.0, 
-         (collimator_downstream_ID)/2.0, collimator_OD/2.0, 
-         collimator_length/4.0, 0.0, 360.*deg );
+   collimator_solid = new G4Tubs("collimator_solid", collimator_ID/2.0, collimator_OD/2.0, collimator_length/2.0, 0.0, 360.*deg );
    collimator_log   = new G4LogicalVolume(collimator_solid, collimator_mat,"collimator_log");
    collimator_phys  = new G4PVPlacement(0,collimator_pos, collimator_log, "collimator_phys",world_log,false,0,checkOverlaps);                                  
 
@@ -256,51 +270,112 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
    G4VisAttributes   * collimator_vis   = new G4VisAttributes(collimator_color);
    collimator_log->SetVisAttributes(collimator_vis);
 
+
    // ------------------------------------------------------------------------
-   // Part II : downstream inner cone 
+   // Chamber Port Flange
+   red       = 0.0/256.0;
+   green     = 0.0/256.0;
+   blue      = 200.0/256.0;
+   alpha     = 0.4;
+
+   auto flange_mesh = CADMesh::TessellatedMesh::FromPLY("../../design_files/plug_flange_beam_port_mod.ply");
+   flange_mesh->SetScale( mm );
+   flange_mesh->SetOffset( chamber_port_flange_offset );
+
+   chamber_port_flange_mat = nist->FindOrBuildMaterial("G4_Cu");
+   chamber_port_flange_solid = flange_mesh->GetSolid();
+   chamber_port_flange_log   = new G4LogicalVolume(chamber_port_flange_solid, chamber_port_flange_mat, "chamber_port_flange_log", 0, 0, 0);
+   chamber_port_flange_phys  = new G4PVPlacement(0, chamber_port_flange_pos, chamber_port_flange_log,
+                                    "chamber_port_flange_phys", world_log, false, 0);
+
+   G4Colour         chamber_port_flange_color {red, green, blue, alpha };
+   G4VisAttributes* chamber_port_flange_vis   = new G4VisAttributes(chamber_port_flange_color);
+   chamber_port_flange_log->SetVisAttributes(chamber_port_flange_vis);
+
+   // ------------------------------------------------------------------------
+   // Chamber Port (which holds an insert) and has window into chamber
    red       = 250.0/256.0;
    green     = 0.0/256.0;
    blue      = 1.0/256.0;
    alpha     = 0.4;
 
-   if(collimator2_phys) delete collimator2_phys;
-   if(collimator2_log)  delete collimator2_log;
-   if(collimator2_solid) delete collimator2_solid;
+   auto mesh = CADMesh::TessellatedMesh::FromPLY("../../design_files/internal_coll_and_port.ply");
+   mesh->SetScale( mm );
+   mesh->SetOffset( chamber_port_offset );
 
-   collimator2_mat   = nist->FindOrBuildMaterial(fCollimatorMatName);
-   collimator2_solid = new G4Cons( "collimator2_solid", 
-         (collimator_upstream_ID)/2.0, collimator_OD/2.0, 
-         (collimator_downstream_ID)/2.0, collimator_OD/2.0, 
-         collimator_length/4.0, 0.0, 360.*deg );
-   //collimator2_solid = new G4Cons("collimator2_solid", collimator_ID/2.0, collimator_OD/2.0, collimator_ID/2.0, collimator_OD/2.0, collimator_length/4.0, 0.0, 360.*deg );
-   collimator2_log   = new G4LogicalVolume(collimator2_solid, collimator2_mat,"collimator2_log");
-   collimator2_phys  = new G4PVPlacement(0,collimator2_pos, collimator2_log, "collimator2_phys",world_log,false,0,checkOverlaps);                                  
+   chamber_port_mat = nist->FindOrBuildMaterial("G4_Cu");
+   chamber_port_solid = mesh->GetSolid();
+   chamber_port_log   = new G4LogicalVolume(chamber_port_solid, chamber_port_mat, "chamber_port_log", 0, 0, 0);
+   chamber_port_phys  = new G4PVPlacement(0, chamber_port_pos, chamber_port_log,
+                                    "chamber_port_phys", world_log, false, 0);
 
-   G4Colour            collimator2_color {red, green, blue, alpha };   // Gray 
-   G4VisAttributes   * collimator2_vis   = new G4VisAttributes(collimator2_color);
-   collimator2_log->SetVisAttributes(collimator2_vis);
+   G4Colour         chamber_port_color {red, green, blue, alpha };
+   G4VisAttributes* chamber_port_vis   = new G4VisAttributes(chamber_port_color);
+   chamber_port_log->SetVisAttributes(chamber_port_vis);
 
 
-   // ------------------------------------------------------------------------
-   // Outer Collimator 
-   // ------------------------------------------------------------------------
-   red       = 0.0/256.0;
-   green     = 256.0/256.0;
-   blue      = 1.0/256.0;
+   // -----------------------------------------------
+   // Port collimator insert
+   red       = 250.0/256.0;
+   green     = 250.0/256.0;
+   blue      = 0.0/256.0;
    alpha     = 0.4;
 
-   if(outer_collimator_phys)  delete outer_collimator_phys;
-   if(outer_collimator_log)   delete outer_collimator_log;
-   if(outer_collimator_solid) delete outer_collimator_solid;
+   auto mesh2 = CADMesh::TessellatedMesh::FromPLY("../../design_files/collimator_silver_insert.ply");
+   mesh2->SetScale( mm );
+   mesh2->SetOffset( port_collimator_offset );
 
-   outer_collimator_mat   = nist->FindOrBuildMaterial("G4_Cu");
-   outer_collimator_solid = new G4Tubs("outer_collimator_solid", outer_collimator_ID/2.0, outer_collimator_OD/2.0, collimator_length/2.0, 0.0, 360.*deg );
-   outer_collimator_log   = new G4LogicalVolume(outer_collimator_solid, outer_collimator_mat,"outer_collimator_log");
-   outer_collimator_phys  = new G4PVPlacement(0,outer_collimator_pos, outer_collimator_log, "outer_collimator_phys",world_log,false,0,checkOverlaps);                                  
-   G4Colour            outer_collimator_color {red, green, blue, alpha };   // Gray 
-   G4VisAttributes   * outer_collimator_vis   = new G4VisAttributes(outer_collimator_color);
-   outer_collimator_vis->SetForceWireframe(true);
-   outer_collimator_log->SetVisAttributes(outer_collimator_vis);
+   port_collimator_mat   = nist->FindOrBuildMaterial("G4_Ag");
+   port_collimator_solid = mesh2->GetSolid();
+   port_collimator_log   = new G4LogicalVolume(port_collimator_solid, port_collimator_mat, "port_collimator_log", 0, 0, 0);
+   port_collimator_phys  = new G4PVPlacement(0, port_collimator_pos, port_collimator_log,
+                                    "port_collimator_phys", world_log, false, 0);
+
+   G4Colour         port_collimator_color {red, green, blue, alpha };
+   G4VisAttributes* port_collimator_vis   = new G4VisAttributes(port_collimator_color);
+   port_collimator_log->SetVisAttributes(port_collimator_vis);
+
+   //// ------------------------------------------------------------------------
+   //// Part II : downstream inner cone 
+
+   //if(collimator2_phys) delete collimator2_phys;
+   //if(collimator2_log)  delete collimator2_log;
+   //if(collimator2_solid) delete collimator2_solid;
+
+   //collimator2_mat   = nist->FindOrBuildMaterial(fCollimatorMatName);
+   //collimator2_solid = new G4Cons( "collimator2_solid", 
+   //      (collimator_upstream_ID)/2.0, collimator_OD/2.0, 
+   //      (collimator_downstream_ID)/2.0, collimator_OD/2.0, 
+   //      collimator_length/4.0, 0.0, 360.*deg );
+   ////collimator2_solid = new G4Cons("collimator2_solid", collimator_ID/2.0, collimator_OD/2.0, collimator_ID/2.0, collimator_OD/2.0, collimator_length/4.0, 0.0, 360.*deg );
+   //collimator2_log   = new G4LogicalVolume(collimator2_solid, collimator2_mat,"collimator2_log");
+   //collimator2_phys  = new G4PVPlacement(0,collimator2_pos, collimator2_log, "collimator2_phys",world_log,false,0,checkOverlaps);                                  
+
+   //G4Colour            collimator2_color {red, green, blue, alpha };   // Gray 
+   //G4VisAttributes   * collimator2_vis   = new G4VisAttributes(collimator2_color);
+   //collimator2_log->SetVisAttributes(collimator2_vis);
+
+
+   //// ------------------------------------------------------------------------
+   //// Outer Collimator 
+   //// ------------------------------------------------------------------------
+   //red       = 0.0/256.0;
+   //green     = 256.0/256.0;
+   //blue      = 1.0/256.0;
+   //alpha     = 0.4;
+
+   //if(outer_collimator_phys)  delete outer_collimator_phys;
+   //if(outer_collimator_log)   delete outer_collimator_log;
+   //if(outer_collimator_solid) delete outer_collimator_solid;
+
+   //outer_collimator_mat   = nist->FindOrBuildMaterial("G4_Cu");
+   //outer_collimator_solid = new G4Tubs("outer_collimator_solid", outer_collimator_ID/2.0, outer_collimator_OD/2.0, collimator_length/2.0, 0.0, 360.*deg );
+   //outer_collimator_log   = new G4LogicalVolume(outer_collimator_solid, outer_collimator_mat,"outer_collimator_log");
+   //outer_collimator_phys  = new G4PVPlacement(0,outer_collimator_pos, outer_collimator_log, "outer_collimator_phys",world_log,false,0,checkOverlaps);                                  
+   //G4Colour            outer_collimator_color {red, green, blue, alpha };   // Gray 
+   //G4VisAttributes   * outer_collimator_vis   = new G4VisAttributes(outer_collimator_color);
+   //outer_collimator_vis->SetForceWireframe(true);
+   //outer_collimator_log->SetVisAttributes(outer_collimator_vis);
 
    // ------------------------------------------------------------------------
    // Scoring volume 
@@ -342,19 +417,18 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
    if(window_log) delete window_log;
    if(window_solid) delete window_solid;
 
-   window_diameter = collimator_downstream_ID;
-   double cone_slope = collimator_tooth_slope;//(collimator_ID/4.0)/(collimator_length/2.0);
+   window_diameter = collimator_ID;
    window_mat   = nist->FindOrBuildMaterial("G4_Cu");
-   window_solid = new G4Cons("collimator2_solid", 
-         0.0, window_diameter/2.0 - cone_slope*window_thickness, 
-         0.0, window_diameter/2.0,
-         window_thickness/2.0, 0.0, 360.*deg );
-   window_log   = new G4LogicalVolume(window_solid, window_mat,"window_log");
-   window_phys  = new G4PVPlacement(0,window_pos, window_log, "window_phys",world_log,false,0,checkOverlaps);                                  
+   //window_solid = new G4Cons("collimator2_solid", 
+   //      0.0, window_diameter/2.0 - cone_slope*window_thickness, 
+   //      0.0, window_diameter/2.0,
+   //      window_thickness/2.0, 0.0, 360.*deg );
+   //window_log   = new G4LogicalVolume(window_solid, window_mat,"window_log");
+   //window_phys  = new G4PVPlacement(0,window_pos, window_log, "window_phys",world_log,false,0,checkOverlaps);                                  
 
-   G4Colour            window_color {red, green, blue, alpha };   // Gray 
-   G4VisAttributes   * window_vis   = new G4VisAttributes(window_color);
-   window_log->SetVisAttributes(window_vis);
+   //G4Colour            window_color {red, green, blue, alpha };   // Gray 
+   //G4VisAttributes   * window_vis   = new G4VisAttributes(window_color);
+   //window_log->SetVisAttributes(window_vis);
 
    // ------------------------------------------------------------------------
    // Scoring volume 
@@ -384,7 +458,6 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
    if(!scoring2_det) scoring2_det = new FakeSD("/FakeSD2");
    SetSensitiveDetector("scoring2_log",scoring2_det);
 
-
    // --------------------------------------------------------
 
    fScoringVolume = scoring2_log;
@@ -408,37 +481,22 @@ void     B1DetectorConstruction::SetRadiatorCollimatorGap(G4double l)
 }
 //______________________________________________________________________________
 
-void     B1DetectorConstruction::SetInnerCollimatorOD(G4double l)
+void     B1DetectorConstruction::SetCollimatorOD(G4double l)
 {   
    collimator_OD       = l;
-   outer_collimator_ID = l;
    if(fHasBeenBuilt) Rebuild();
 }
 //______________________________________________________________________________
 
-void     B1DetectorConstruction::SetInnerCollimatorUpstreamID(G4double l)
+void     B1DetectorConstruction::SetCollimatorID(G4double l)
 {   
-   collimator_upstream_ID       = l;
-   if(fHasBeenBuilt) Rebuild();
-}
-//______________________________________________________________________________
-
-void     B1DetectorConstruction::SetInnerCollimatorDownstreamID(G4double l)
-{   
-   collimator_downstream_ID       = l;
+   collimator_ID       = l;
    if(fHasBeenBuilt) Rebuild();
 }
 //______________________________________________________________________________
 void     B1DetectorConstruction::SetCollimatorLength(G4double l)
 {   
    collimator_length = l;
-   if(fHasBeenBuilt) Rebuild();
-}
-//______________________________________________________________________________
-
-void     B1DetectorConstruction::SetCollimatorToothSlope(G4double l)
-{   
-   collimator_tooth_slope = l;
    if(fHasBeenBuilt) Rebuild();
 }
 //______________________________________________________________________________
@@ -453,16 +511,13 @@ void     B1DetectorConstruction::PrintConfigInfo() const
          << "                   weight : " << collimator_log->GetMass(true)/kg << " kg\n"
          << "                 material : " << fCollimatorMatName               << "\n"
          << "                   length : " << collimator_length/cm             << " cm\n"
-         << "  collimator upstream_ID  : " << collimator_upstream_ID/cm        << " cm\n"
-         << "collimator downstream_ID  : " << collimator_downstream_ID/cm      << " cm\n"
-         << "      outer collimator ID : " << outer_collimator_ID/cm      << " cm\n"
-         << "      outer collimator OD : " << outer_collimator_OD/cm      << " cm\n"
-         << "  collimator tooth slope  : " << collimator_tooth_slope      << " \n"
-         << "  collimator tooth angle  : " << atan(collimator_tooth_slope)/degree  << " \n"
-         << "           collimator OD  : " << collimator_OD/cm                 << " cm\n"
+         << "            collimator ID : " << collimator_ID/cm        << " cm\n"
+         << "            collimator OD : " << collimator_OD/cm      << " cm\n"
          << " radiator collimator gap  : " << radiator_collimator_gap/cm       << " cm\n"
          << "  collimator target dist  : " << collimator_target_center_gap/cm  << " cm\n"
-         << "      radiator thickness  : " << radiator_thickness/cm            << " cm\n";
+         << "      radiator thickness  : " << radiator_thickness/cm            << " cm\n"
+         << " chamber_port_pos Z       : " << chamber_port_pos.z()/cm << " cm\n"
+         << "chamber port exit z pos   : " << chamber_port_pos.z()/cm + chamber_port_length/cm<< " cm\n";
    } else {
       std::cout << " detector not built yet" << std::endl;
    }

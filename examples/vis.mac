@@ -36,55 +36,13 @@
 /vis/viewer/set/auxiliaryEdge true
 
 #/vis/viewer/set/lineSegmentsPerCircle 100
-#
-# Draw smooth trajectories at end of event, showing trajectory points
-# as markers 2 pixels wide:
-#/vis/scene/add/trajectories smooth
-#/vis/modeling/trajectories/create/drawByCharge
-#/vis/modeling/trajectories/drawByCharge-0/default/setDrawStepPts true
-#/vis/modeling/trajectories/drawByCharge-0/default/setStepPtsSize 2
-# (if too many tracks cause core dump => /tracking/storeTrajectory 0)
-#
-# Draw hits at end of event:
-#/vis/scene/add/hits
-#
-# To draw only gammas:
-#/vis/filtering/trajectories/create/particleFilter
-#/vis/filtering/trajectories/particleFilter-0/add gamma
-#
-# To invert the above, drawing all particles except gammas,
-# keep the above two lines but also add:
-#/vis/filtering/trajectories/particleFilter-0/invert true
-#
-# Many other options are available with /vis/modeling and /vis/filtering.
-# For example, to select colour by particle ID:
 
-/vis/scene/add/trajectories smooth
-/vis/modeling/trajectories/create/drawByParticleID dbPID
-/vis/modeling/trajectories/select dbPID
-
-#/vis/modeling/trajectories/drawByParticleID-0/default/setDrawStepPts true
-
-# To select or override default colours (note: e+ is blue by default):
-
-/vis/modeling/trajectories/list
-/vis/modeling/trajectories/dbPID/set gamma blue
-/vis/modeling/trajectories/dbPID/set gamma blue
-
-#/vis/scene/add/trajectories smooth
-#/vis/modeling/trajectories/create/drawByOriginVolume dbOV
-#/vis/modeling/trajectories/dbOV/set resist_log red
-#/vis/modeling/trajectories/dbOV/set world_log blue
-#/vis/modeling/trajectories/dbOV/set Cr_phys green 
-#/vis/modeling/trajectories/dbOV/set Nb_phys yellow
-#/vis/modeling/trajectories/dbOV/set SiO2_phys black
-#/vis/modeling/trajectories/dbOV/default/setDrawStepPts true
-#/vis/modeling/trajectories/select dbOV
+/control/execute examples/trajectory_model.mac
 
 #
 # To superimpose all of the events from a given run:
 
-/vis/scene/endOfEventAction accumulate 200 
+/vis/scene/endOfEventAction accumulate 1000 
 
 #
 # Decorations
@@ -150,6 +108,6 @@
 
 /vis/viewer/flush
 
-/run/beamOn 10
+/run/beamOn 1000
 
 

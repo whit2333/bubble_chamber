@@ -37,10 +37,8 @@ class B1DetectorMessenger: public G4UImessenger
     G4UIcmdWithAString        * fRadiatorMatCmd;
     G4UIcmdWithAString        * fCollimatorMatCmd;
     G4UIcmdWithADoubleAndUnit * fCollimatorLengthCmd;
-    G4UIcmdWithADouble        * fCollimatorToothSlopeCmd;
-    G4UIcmdWithADoubleAndUnit * fInnerCollimatorUpstreamIDCmd;
-    G4UIcmdWithADoubleAndUnit * fInnerCollimatorDownstreamIDCmd;
-    G4UIcmdWithADoubleAndUnit * fInnerCollimatorODCmd;
+    G4UIcmdWithADoubleAndUnit * fCollimatorIDCmd;
+    G4UIcmdWithADoubleAndUnit * fCollimatorODCmd;
     G4UIcmdWithADoubleAndUnit * fRadiatorCollimatorGapCmd;
     G4UIcmdWithAString        * fTargMatCmd;
     G4UIcmdWithAString        * fChamMatCmd;

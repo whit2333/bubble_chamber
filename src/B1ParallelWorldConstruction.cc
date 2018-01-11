@@ -16,11 +16,7 @@
 B1ParallelWorldConstruction ::B1ParallelWorldConstruction(G4String& parallelWorldName) :
    G4VUserParallelWorld(parallelWorldName),
    fConstructed(false),
-   fNeedsRebuilt(true),
-   fSpanDistance(40.0*cm),
-   fDirection(0,0,1.0),
-   fStartingPoint(0,0,0),
-   fDet_size(50.0*cm)
+   fNeedsRebuilt(true)
 {
    for(int i = 0; i < fNplanes; i++) {
       fDet_solid[i]  = nullptr;
@@ -113,8 +109,7 @@ void B1ParallelWorldConstruction::Construct()
       } else {
          scoring_vis->SetColour(scoring_color);
       }
-      scoring_log->SetVisAttributes(scoring_vis);
-
+      scoring_log->SetVisAttributes(scoring_vis); 
       //G4UserLimits * scoring_limits = new G4UserLimits(0.004*um);
       //scoring_log->SetUserLimits(scoring_limits);
 

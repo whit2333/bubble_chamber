@@ -14,6 +14,8 @@ class G4VisAttributes;
 #include "G4ThreeVector.hh"
 #include "G4String.hh"
 #include "G4VUserParallelWorld.hh"
+#include "globals.hh"
+#include "G4SystemOfUnits.hh"
 
 
 /// A parallel world construction class
@@ -26,10 +28,10 @@ class B1ParallelWorldConstruction : public G4VUserParallelWorld
    private:
       G4bool        fConstructed;
       G4bool        fNeedsRebuilt;
-      double        fSpanDistance;
-      G4ThreeVector fDirection;
-      G4ThreeVector fStartingPoint;
-      double        fDet_size;
+      double        fSpanDistance  = 32.0*cm;
+      G4ThreeVector fDirection    {0,0,1.0};
+      G4ThreeVector fStartingPoint{0,0,0} ;
+      double        fDet_size      = 10.0*cm;
 
       static const int fNplanes = 10;
       std::array< G4ThreeVector      , fNplanes > fDet_pos   ;
