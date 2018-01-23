@@ -10,8 +10,9 @@ SET(BUBBLESIM_MINOR_VERSION 0)
 SET(BUBBLESIM_PATCH_VERSION 0)
 set(BUBBLESIM_VERSION ${BUBBLESIM_MAJOR_VERSION}.${BUBBLESIM_MINOR_VERSION}.${BUBBLESIM_PATCH_VERSION})
 
-SET(MACRO_DIR    share/${PROJECT_NAME})
-SET(GEOMETRY_DIR share/${PROJECT_NAME}/geometry_files)
+SET(SHARE_DIR_NAME bubble_sim)
+SET(MACRO_DIR    share/${SHARE_DIR_NAME})
+SET(GEOMETRY_DIR share/${SHARE_DIR_NAME}/geometry_files)
 
 SET(BUBBLESIM_MACRO_DIR ${CMAKE_INSTALL_PREFIX}/${MACRO_DIR} )
 SET(BUBBLESIM_GEOMETRY_DIR ${CMAKE_INSTALL_PREFIX}/${GEOMETRY_DIR} )
@@ -105,10 +106,10 @@ foreach(_script ${EXAMPLEB1_SCRIPTS})
     )
 endforeach()
 install(FILES ${EXAMPLEB1_SCRIPTS} 
-  DESTINATION share/bubble_sim/examples )
+  DESTINATION share/${SHARE_DIR_NAME}/examples )
 
 install(DIRECTORY  ${PROJECT_SOURCE_DIR}/geometry_files
-  DESTINATION share/bubble_sim )
+  DESTINATION share/${SHARE_DIR_NAME} )
 
 
 #----------------------------------------------------------------------------
