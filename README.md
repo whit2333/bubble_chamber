@@ -3,8 +3,15 @@ Bubble Sim
 
 A Geant4 simulation for bubble chamber experiment.
 
-Build and Install
+Running Container
 -----------------
+
+```
+singularity pull whit2333/bubble_sim:latest
+```
+
+Build and Install Manually
+--------------------------
 
 Standard cmake build assuming you have geant4 installed.
 

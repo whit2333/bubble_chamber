@@ -105,10 +105,10 @@ foreach(_script ${EXAMPLEB1_SCRIPTS})
     )
 endforeach()
 install(FILES ${EXAMPLEB1_SCRIPTS} 
-  DESTINATION "${CMAKE_INSTALL_PREFIX}/share/${PROJECT_NAME}/examples" )
+  DESTINATION share/bubble_sim/examples )
 
 install(DIRECTORY  ${PROJECT_SOURCE_DIR}/geometry_files
-  DESTINATION share/${PROJECT_NAME} )
+  DESTINATION share/bubble_sim )
 
 
 #----------------------------------------------------------------------------
