@@ -1,0 +1,17 @@
+Bootstrap: docker
+From: docker://whit2333/bubble_sim:latest
+
+%runscript                                                                                                                                                               
+  echo "This is what happens when you run the container..."
+
+%post                                                                                                                                                                    
+  echo "Hello from inside the container"
+  echo "Install additional software here"
+
+%help
+  Help me. I'm in the container.
+
+
+%labels
+  Maintainer "Whitney Armstrong"
+  Version v0.1
