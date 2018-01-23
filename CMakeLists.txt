@@ -128,7 +128,7 @@ set(EXAMPLEB1_CONF_FILES
   )
 foreach(_script ${EXAMPLEB1_CONF_FILES})
   configure_file("${_script}.in" "${PROJECT_BINARY_DIR}/${_script}" @ONLY)
-  install(FILES ${PROJECT_BINARY_DIR}/${_script} DESTINATION ${CMAKE_INSTALL_PREFIX}/share/${PROJECT_NAME} )
+  install(FILES ${PROJECT_BINARY_DIR}/${_script} DESTINATION ${CMAKE_INSTALL_PREFIX}/share/${SHARE_DIR_NAME} )
 endforeach()
 
 

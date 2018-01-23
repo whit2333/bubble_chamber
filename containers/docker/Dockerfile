@@ -6,7 +6,10 @@
 FROM whit2333/geant4_base:latest
 LABEL maintainer "Whitney Armstrong <warmstrong@anl.gov>"
 
-RUN cd /tmp && git clone https://eicweb.phy.anl.gov/whit/bubble_chamber_sim.git \
+RUN apt-get install -y libassimp-dev
+
+RUN cd /tmp \
+    && git clone https://eicweb.phy.anl.gov/whit/bubble_chamber_sim.git \
     && cd bubble_chamber_sim && mkdir -p build \
     && cd build \
     && cmake ../. \
@@ -15,7 +18,6 @@ RUN cd /tmp && git clone https://eicweb.phy.anl.gov/whit/bubble_chamber_sim.git 
 
 SHELL ["/bin/bash", "-c"]
 
-RUN apt-get install -y libassimp-dev
 
 ###RUN cd /usr/local/lib \
 ###      && wget https://hallcweb.jlab.org/experiments/sane/whit/cernlib_2006.tar.gz -O - | tar -xvz 
