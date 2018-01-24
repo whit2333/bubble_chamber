@@ -6,9 +6,9 @@ From: docker://whit2333/bubble_sim:latest
   /bin/bash <<EOF
   echo "some code here"
   source /usr/local/bin/geant4.sh
-  #bubble_chamber $@
+  bubble_chamber $@
   EOF 
-  exec /usr/local/bin/run_bubble_sim "$@"
+  #exec /usr/local/bin/run_bubble_sim "$@"
 
 %post
   echo "Hello from inside the container"
