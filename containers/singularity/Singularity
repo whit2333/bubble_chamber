@@ -17,11 +17,10 @@ From: docker://whit2333/bubble_sim:latest
     done
   fi
   /bin/bash <<EOF
-  read pipe_cmds
   echo "some code here"
   source /usr/local/bin/geant4.sh
   echo -e ${derp} | bubble_chamber "$@"
-  EOF $@
+  EOF
   #exec /usr/local/bin/run_bubble_sim "$@"
 
 %post
