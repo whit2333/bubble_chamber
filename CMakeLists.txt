@@ -111,6 +111,9 @@ install(FILES ${EXAMPLEB1_SCRIPTS}
 install(DIRECTORY  ${PROJECT_SOURCE_DIR}/geometry_files
   DESTINATION share/${SHARE_DIR_NAME} )
 
+install(FILES ${PROJECT_SOURCE_DIR}/bin/run_bubble_sim 
+  DESTINATION bin )
+
 
 #----------------------------------------------------------------------------
 # Install the executable to 'bin' directory under CMAKE_INSTALL_PREFIX

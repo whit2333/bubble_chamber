@@ -1,0 +1,5 @@
+#!/bin/bash
+
+source /usr/local/bin/geant4.sh
+bubble_chamber $@
+
