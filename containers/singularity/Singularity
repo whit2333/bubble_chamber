@@ -5,10 +5,9 @@ From: docker://whit2333/bubble_sim:latest
   echo "This is what happens when you run the container..."
   derp=
   if [ -p /dev/stdin ]; then
-    echo "Data was piped to this script!"
     # If we want to read the input line by line
     while IFS= read line; do
-      echo "Line: ${line}"
+      #echo "Line: ${line}"
       if [ -z ${derp} ]; then
         derp="${line}"
       else 
