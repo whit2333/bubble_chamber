@@ -4,11 +4,11 @@ From: docker://whit2333/bubble_sim:latest
 %runscript
   echo "This is what happens when you run the container..."
   /bin/bash <<EOF
-  #!/bin/bash
+  read pipe_cmds
   echo "some code here"
   source /usr/local/bin/geant4.sh
-  bubble_chamber $@
-  EOF $@
+  echo ${pipe_cmds} | bubble_chamber "$@"
+  EOF
   #exec /usr/local/bin/run_bubble_sim "$@"
 
 %post
