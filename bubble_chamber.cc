@@ -75,6 +75,7 @@ int main(int argc,char** argv)
 
   auto cli = (
     (option("-r", "--run") & value("run_number",S.run_number))      % "set the run number",
+    (option("-m", "--macro") & value("macro",S.macroFile).set(S.has_macro_file,true))      % "set the run number",
     option("-b", "--batch")([&](){S.use_gui=false; S.use_vis=false; S.is_interactive=false;}) % "run in batch mode (no gui or vis)",
     (option("-g", "--gui") & integer("gui")([&](auto v){S.use_gui=v;}))                 % "use GUI ",
     option("-i", "--interactive")([&](){S.is_interactive=true;}) % "run in interactivemode ",
