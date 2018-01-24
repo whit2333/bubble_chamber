@@ -1,6 +1,6 @@
 #!/bin/bash
-
-# bubble_sim
+#
+# singularity_bubble_sim
 
 piped_args=
 if [ -p /dev/stdin ]; then
