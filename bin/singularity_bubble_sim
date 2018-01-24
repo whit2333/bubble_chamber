@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# bubble_sim
+
+piped_args=
+if [ -p /dev/stdin ]; then
+  # If we want to read the input line by line
+  while IFS= read line; do
+    echo "Line: ${line}"
+    if [ -z "$piped_args" ]; then
+      piped_args="${line}"
+    else 
+      piped_args="${piped_args}\n${line}"
+    fi
+  done
+fi
+
+#echo ${piped_args}
+#macName=$(mktemp --suffix=.mac)
+#echo $macName
+#echo -e "${piped_args}" >> ${macName}
+#cat ${macName}
+
+echo -e ${piped_args} | singularity run \
+  -B /u/group:/group  \
+  -B /lustre:/lustre \
+  -B /w/work:/work \
+  -B /lustre/expphy/volatile:/volatile \
+  /work/eic/whit/singularity_cache/bubble_sim.simg  $@ ${macName}
+#rm ${macName}
+
