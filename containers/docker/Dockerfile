@@ -8,7 +8,7 @@ LABEL maintainer "Whitney Armstrong <warmstrong@anl.gov>"
 
 RUN apt-get install -y libassimp-dev
 
-RUN cd /tmp \
+RUN cd /tmp  \
     && git clone https://eicweb.phy.anl.gov/whit/bubble_chamber_sim.git \
     && cd bubble_chamber_sim && mkdir -p build \
     && cd build \

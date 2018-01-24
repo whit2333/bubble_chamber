@@ -111,8 +111,11 @@ install(FILES ${EXAMPLEB1_SCRIPTS}
 install(DIRECTORY  ${PROJECT_SOURCE_DIR}/geometry_files
   DESTINATION share/${SHARE_DIR_NAME} )
 
-install(FILES ${PROJECT_SOURCE_DIR}/bin/run_bubble_sim 
-  DESTINATION bin )
+install(FILES
+  ${PROJECT_SOURCE_DIR}/bin/run_bubble_sim 
+  DESTINATION bin
+  PERMISSIONS WORLD_READ WORLD_EXECUTE
+  )
 
 
 #----------------------------------------------------------------------------
