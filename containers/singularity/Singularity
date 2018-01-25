@@ -2,7 +2,7 @@ Bootstrap: docker
 From: docker://whit2333/bubble_sim:latest
 
 %runscript
-  echo "This is what happens when you run the container..."
+  #echo "This is what happens when you run the container..."
   derp=
   if [ -p /dev/stdin ]; then
     # If we want to read the input line by line
@@ -26,7 +26,6 @@ EOF
 
 %help
   Help me. I'm in the container.
-
 
 %labels
   Maintainer "Whitney Armstrong"
