@@ -31,10 +31,10 @@ class SimulationManager
         treeTop->SetVerboseLevel(vl);
       }
 
-private:
-    //Disable copy constructor and assignment operator
-    G4SDManager( const G4SDManager& );
-    G4SDManager& operator=(const G4SDManager&);
+  private:
+      //Disable copy constructor and assignment operator
+      G4SDManager( const G4SDManager& );
+      G4SDManager& operator=(const G4SDManager&);
 
 };
 

@@ -55,10 +55,16 @@ class B1PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
   
     // method to access particle gun
     const G4ParticleGun* GetParticleGun() const { return fParticleGun; }
+
+
+    void   SetBeamEnergy(double E) { fBeamEnergy = E; }
+    double GetBeamEnergy() const { return fBeamEnergy; }
+  
   
   private:
+    double          fBeamEnergy;
     G4ParticleGun*  fParticleGun; // pointer a to G4 gun class
-    G4Box* fEnvelopeBox;
+    G4Box*          fEnvelopeBox;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

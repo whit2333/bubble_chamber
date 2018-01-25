@@ -1,5 +1,17 @@
 #!/bin/bash
 
+piped_args=
+if [ -p /dev/stdin ]; then
+  # If we want to read the input line by line
+  while IFS= read line; do
+    echo "Line: ${line}"
+    if [ -z "$piped_args" ]; then
+      piped_args="${line}"
+    else 
+      piped_args="${piped_args}\n${line}"
+    fi
+  done
+fi
 source /usr/local/bin/geant4.sh
-bubble_chamber $@
+echo -e ${piped_args} | bubble_chamber $@
 

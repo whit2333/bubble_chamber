@@ -1,7 +1,6 @@
 #!/bin/bash
 #
 # singularity_bubble_sim
-
 piped_args=
 if [ -p /dev/stdin ]; then
   # If we want to read the input line by line

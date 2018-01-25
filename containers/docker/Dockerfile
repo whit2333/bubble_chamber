@@ -18,6 +18,13 @@ RUN cd /tmp \
 
 SHELL ["/bin/bash", "-c"]
 
+RUN useradd -ms /bin/bash -d /opt/bubble_user bubble_user 
+USER bubble_user
+WORKDIR /opt/bubble_user
+
+CMD ["-h"]
+ENTRYPOINT ["run_bubble_sim"]
+
 
 ###RUN cd /usr/local/lib \
 ###      && wget https://hallcweb.jlab.org/experiments/sane/whit/cernlib_2006.tar.gz -O - | tar -xvz 
