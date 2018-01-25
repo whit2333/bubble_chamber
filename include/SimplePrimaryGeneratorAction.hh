@@ -7,13 +7,10 @@
 #include <fstream>
 //#include "ThrownEvent.h"
 
-#include "Math/Vector3D.h"
-#include "Math/Vector4D.h"
-
 struct PrimaryParticle {
   int                        pdg = 11;
-  ROOT::Math::XYZVector      vertex;
-  ROOT::Math::PxPyPzMVector  momentum;
+  std::array<double,3>       vertex;
+  std::array<double,4>       momentum;
 };
 
 class G4GeneralParticleSource;
