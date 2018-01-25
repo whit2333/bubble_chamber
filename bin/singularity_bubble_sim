@@ -1,7 +1,6 @@
 #!/bin/bash
 #
 # singularity_bubble_sim
-
 piped_args=
 if [ -p /dev/stdin ]; then
   # If we want to read the input line by line
@@ -26,6 +25,6 @@ echo -e ${piped_args} | singularity run \
   -B /lustre:/lustre \
   -B /w/work:/work \
   -B /lustre/expphy/volatile:/volatile \
-  /work/eic/whit/singularity_cache/bubble_sim.simg  $@ ${macName}
+  /work/eic/whit/singularity_cache/bubble_sim.simg  $@
 #rm ${macName}
 
