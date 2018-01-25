@@ -25,7 +25,7 @@ echo -e "${piped_args}" | singularity run \
   -B /lustre:/lustre \
   -B /w/work:/work \
   -B /lustre/expphy/volatile:/volatile \
-  /work/eic/whit/singularity_cache/bubble_sim.simg  $@
+  /work/eic/whit/singularity_cache/bubble_sim2.simg  $@
 #rm ${macName}
 
 echo -e ${piped_args} 
