@@ -23,7 +23,7 @@ USER bubble_user
 WORKDIR /opt/bubble_user
 
 CMD ["-h"]
-ENTRYPOINT ["bubble_chamber"]
+ENTRYPOINT ["run_bubble_sim"]
 
 
 ###RUN cd /usr/local/lib \
