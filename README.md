@@ -7,7 +7,7 @@ Running Container
 -----------------
 
 ```
-singularity pull whit2333/bubble_sim:latest
+singularity pull --name bubble_sim.simg shub://whit2333/bubble_sim
 ```
 
 Build and Install Manually
