@@ -15,17 +15,19 @@ if [ -p /dev/stdin ]; then
   done
 fi
 
-#echo ${piped_args}
+echo ${piped_args}
 #macName=$(mktemp --suffix=.mac)
 #echo $macName
 #echo -e "${piped_args}" >> ${macName}
 #cat ${macName}
 
-echo -e ${piped_args} | singularity run \
+echo -e "${piped_args}" | singularity run \
   -B /u/group:/group  \
   -B /lustre:/lustre \
   -B /w/work:/work \
   -B /lustre/expphy/volatile:/volatile \
-  /work/eic/whit/singularity_cache/bubble_sim.simg  $@ ${macName}
+  /work/eic/whit/singularity_cache/bubble_sim.simg  $@
 #rm ${macName}
 
+echo -e ${piped_args} 
+echo  "$@"
