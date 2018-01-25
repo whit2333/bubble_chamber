@@ -14,10 +14,14 @@ class B1ActionInitialization : public G4VUserActionInitialization
 {
    public:
       G4int              fRunNumber;
+      double             fBeamEnergy;
       //B1RunAction      * fRunAction     ;
       //B1EventAction     fEventAction   ;
       //B1SteppingAction  fSteppingAction;
+      void   SetBeamEnergy(double E) { fBeamEnergy = E; }
+      double GetBeamEnergy() const { return fBeamEnergy; }
 
+  
    public:
       B1ActionInitialization(G4int rn = 0);
       virtual ~B1ActionInitialization();

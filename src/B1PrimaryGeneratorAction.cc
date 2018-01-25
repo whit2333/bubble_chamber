@@ -13,7 +13,7 @@
 
 
 B1PrimaryGeneratorAction::B1PrimaryGeneratorAction() : G4VUserPrimaryGeneratorAction(),
-   fParticleGun(0), fEnvelopeBox(0)
+   fParticleGun(0), fEnvelopeBox(0),fBeamEnergy(8.0*MeV)
 {
    G4int n_particle = 1;
    fParticleGun  = new G4ParticleGun(n_particle);
@@ -25,7 +25,7 @@ B1PrimaryGeneratorAction::B1PrimaryGeneratorAction() : G4VUserPrimaryGeneratorAc
       = particleTable->FindParticle(particleName="e-");
    fParticleGun->SetParticleDefinition(particle);
    fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,1.));
-   fParticleGun->SetParticleEnergy(8.0*MeV); // kinetic energy (not total)
+   fParticleGun->SetParticleEnergy(fBeamEnergy); // kinetic energy (not total)
 }
 //______________________________________________________________________________
 
@@ -46,6 +46,8 @@ void B1PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 
    G4double envSizeXY = 0.5*mm;
    G4double envSizeZ  = 0.0*nm;
+
+   fParticleGun->SetParticleEnergy(fBeamEnergy); // kinetic energy (not total)
 
    //if (!fEnvelopeBox)
    //{
