@@ -74,6 +74,7 @@ struct Settings {
   bool         help              = false;
   bool         is_command        = false;
   bool         is_copy_command   = false;
+  bool         use_gps           = false;
 
   std::map<CopyMode, std::vector<std::string>> copymode_file_names = {
     {CopyMode::vis, { BUBBLESIM_MACRO_DIR "/examples/vis.mac",
@@ -205,43 +206,43 @@ int main(int argc,char** argv)
     "Mono energetic GPS distributated like I∝δ(E−E0) with one parameter" % (
       command("Mono")                   % "type name"  &
       value("E0")                       % "E0 fixed energy parameter" & 
-      ( command("MeV")|command("GeV") ) % "Units [default:MeV]" )
+      ( option("MeV")|option("GeV") ) % "Units [default:MeV]" )
     |
     "Gaussian distributed  distribution with two parameters. I=(2πσ)−12exp[−(E/E0)2/σ2] Mean energy E0, std deviation σ" % (
       command("Gauss")                  % "type name"  & 
       value("E0")                       % "mean energy" & 
-      ( command("MeV")|command("GeV") ) % "Units [default:MeV]"  &
+      ( option("MeV")|option("GeV") ) % "Units [default:MeV]"  &
       value("sigma")                    % "sigma: std deviation " & 
-      ( command("MeV")|command("GeV") ) % "Units [default:MeV]" )
+      ( option("MeV")|option("GeV") ) % "Units [default:MeV]" )
     |
     "Exp  - exponential    I∝exp(−E/E0) Energy scale-height E0" % (
       command("Exp")                    % " typename " & 
       value("E0")                       % "E0 fixed energy parameter" & 
-      ( command("MeV")|command("GeV") ) % "Units [default:MeV]" )
+      ( option("MeV")|option("GeV") ) % "Units [default:MeV]" )
     |
     "Lin  - linear         I∝I0+m×E Intercept I0 , slope m" % ( 
       command("Lin")                    % "type name" & 
       value("I0")                       % "I0 intercept" & 
       value("m")                        % "slope" & 
-      ( command("MeV")|command("GeV") ) % "inverse Units [default:MeV]" )
+      ( option("MeV")|option("GeV") ) % "inverse Units [default:MeV]" )
     |
     "Pow  - power-law      I∝Eα Spectral index α" % (
       command("Pow")                    % " typename" &
       value("alpha")                    % "alpha parameter" & 
-      ( command("MeV")|command("GeV") ) % "Units [default:MeV]")
+      ( option("MeV")|option("GeV") ) % "Units [default:MeV]")
     //command("brem")        % "Brem - bremsstrahlung I=∫2E2[h2c2(exp(−E/kT)−1)]−1 Temperature T",
     //command("Bbody")       % "Bbody- black body     I∝(kT)12Eexp(−E/kT) Temperature T",
     //command("cdg")         % "Cdg  - cosmic diffuse gamma ray I∝[(E/Eb)α1+(E/Eb)α2]−1 Energy range Emin to Emax; Eb and indices α1 and α2 are fixed"
     ) ;
   
-  auto gps_mode = "build gps mode:" % (
-    command("build") & command("gps") & 
-    "GPS confugration" % (
+  auto gps_mode = "gps mode:" % (
+    command("gps") & 
+    "GPS energy confugration" % (
       command("energy") % "Energy Dist Type. See G4 docs for details (https://tinyurl.com/ydgsc5qj)" & gps_build_energy 
+      )
       //|
       //command("angle") % "Angular Dist Type " &
       //"List of Angular Distributions:" % (command("iso") % "iso"| command("flat") % "flat" )
-      )
     );
   auto cli = ( help_mode % "print help this help"
               |copy_mode % "Copy mode"

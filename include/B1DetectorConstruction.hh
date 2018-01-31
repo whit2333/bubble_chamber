@@ -33,8 +33,22 @@ class B1DetectorConstruction : public G4VUserDetectorConstruction
       G4double collimator_chamber_port_gap    = 2.0*mm       ; // ?
       G4double chamber_port_length            = 15.24*cm ;
       G4double chamber_port_flange_length     =  7.62*cm ;
+      G4double chamber_port_flange_thickness  =  2.54*cm ;
       G4double chamber_flange_port_offset     =  3.17*mm ;
       G4double collimator_insert_length       = 10.16*cm ;
+      G4double flange_collimator_length       = 10.0*cm ;
+      G4double steel_vessel_length            = 30.48*cm ;
+      G4double steel_vessel_port_diameter     = 158.75*mm ;
+      G4double steel_vessel_height1           = 25.40*cm ;
+      G4double steel_vessel_height2           = 40.64*cm ;
+      G4double steel_vessel_port_top_offset   = 47.62*mm ;
+
+      G4double glass_cell_OD                = 38.10*mm;
+      G4double glass_cell_ID                = 36.07*mm;
+      G4double glass_cell_tupe_height       = 19.05*mm;
+      G4double glass_cell_total_height      = 101.53*mm;
+      G4double glass_cell_height_to_tube    = 63.43*mm;
+      G4double glass_cell_vertical_offset   = 8.888*mm;
 
       G4double beampipe_length              = 20.0*cm ;
       G4double beampipe_diameter            = 8.0*cm  ;
@@ -101,6 +115,34 @@ class B1DetectorConstruction : public G4VUserDetectorConstruction
       G4VSolid          * chamber_port_solid ;
       G4LogicalVolume   * chamber_port_log ;  
       G4VPhysicalVolume * chamber_port_phys;  
+
+      G4ThreeVector       steel_chamber_pos;
+      G4ThreeVector       steel_chamber_offset;
+      G4Material        * steel_chamber_mat ;  
+      G4VSolid          * steel_chamber_solid ;
+      G4LogicalVolume   * steel_chamber_log ;  
+      G4VPhysicalVolume * steel_chamber_phys;  
+
+      G4ThreeVector       exit_port_flange_pos;
+      G4ThreeVector       exit_port_flange_offset;
+      G4Material        * exit_port_flange_mat ;  
+      G4VSolid          * exit_port_flange_solid ;
+      G4LogicalVolume   * exit_port_flange_log ;  
+      G4VPhysicalVolume * exit_port_flange_phys;  
+
+      G4ThreeVector       exit_port_collimator_pos;
+      G4ThreeVector       exit_port_collimator_offset;
+      G4Material        * exit_port_collimator_mat ;  
+      G4VSolid          * exit_port_collimator_solid ;
+      G4LogicalVolume   * exit_port_collimator_log ;  
+      G4VPhysicalVolume * exit_port_collimator_phys;  
+
+      G4ThreeVector       glass_cell_pos;
+      G4ThreeVector       glass_cell_offset;
+      G4Material        * glass_cell_mat ;  
+      G4VSolid          * glass_cell_solid ;
+      G4LogicalVolume   * glass_cell_log ;  
+      G4VPhysicalVolume * glass_cell_phys;  
 
       G4ThreeVector       scoring_pos;
       G4Material        * scoring_mat   ;

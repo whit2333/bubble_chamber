@@ -29,25 +29,6 @@
 
 B1DetectorConstruction::B1DetectorConstruction() : 
    G4VUserDetectorConstruction(), 
-   //world_x                      ( 1.0*m                  ),
-   //world_y                      ( 1.0*m                  ),
-   //world_z                      ( 2.0*m                  ),
-   //radiator_thickness           ( 6.0*mm                 ),
-   //radiator_collimator_gap      ( 1.0*mm                 ),
-   //collimator_OD                ( 4.0*2.54*cm            ),
-   //collimator_ID                ( 0.315*2.54*cm          ),
-   //collimator_z_end             ( 0.0*cm            ),
-   //collimator_length            ( 6.0*2.54*cm                 ),
-   //collimator_target_center_gap ( 4.0*cm                 ),
-   //beampipe_length              ( 20.0*cm ),
-   //beampipe_diameter            ( 8.0*cm  ),
-   //radiator_diameter            ( 8.0*cm  ),
-   //scoring_diameter             ( 20.0*cm ),
-   //scoring_length               ( 0.01*mm    ),
-   //window_diameter              ( 1.0*cm  ),
-   //window_thickness             ( 8.0*mm  ),
-   //scoring2_diameter            ( 20.0*cm ),
-   //scoring2_length              ( 0.01*mm    ),
    fScoringVolume               ( 0),
    fHasBeenBuilt(false)
 {
@@ -130,28 +111,34 @@ void B1DetectorConstruction::CalculatePositions()
    chamber_port_flange_pos = { 0, 0, radiator_thickness/2.0
                                   + radiator_collimator_gap
                                   + collimator_length
-                                  + collimator_chamber_port_gap
-                                  + 0.0*chamber_port_flange_length/2.0 };
+                                  + collimator_chamber_port_gap};
    chamber_port_flange_offset = {0,0, 0.0*chamber_port_flange_length/2.0 };
 
    // Chamber port is the part which has the window to the chamber and holds the
    // insert
-   chamber_port_pos = { 0, 0, radiator_thickness/2.0
-                                  + radiator_collimator_gap
-                                  + collimator_length
-                                  + collimator_chamber_port_gap
-                                  + chamber_flange_port_offset // the port face is recessed by a few mm from the flange face
-                                  + 0.0*chamber_port_length/2.0 };
+   chamber_port_pos = chamber_port_flange_pos + G4ThreeVector(0,0,
+                                  0.0*chamber_flange_port_offset // the port face is recessed by a few mm from the flange face
+                                  );
    chamber_port_offset = {0,0, 0.0*chamber_port_length/2.0 };
 
    // The collimator insert
-   port_collimator_pos  = { 0, 0, radiator_thickness/2.0
-                                  + radiator_collimator_gap
-                                  + collimator_length
-                                  + collimator_chamber_port_gap
-                                  + chamber_flange_port_offset // the port face is recessed by a few mm from the flange face
-                                  + 0.0*collimator_insert_length/2.0 };
+   port_collimator_pos  = chamber_port_pos ;
    port_collimator_offset = {0,0, 0.0*collimator_insert_length/2.0 };
+
+   steel_chamber_pos    = chamber_port_flange_pos
+   + G4ThreeVector( 0,
+                   steel_vessel_length/2.0 - steel_vessel_height2 + steel_vessel_port_top_offset + steel_vessel_port_diameter/2.0,
+                   chamber_port_flange_thickness + steel_vessel_length);
+   steel_chamber_offset = {-1.0*steel_vessel_length/2.0,-1.0*steel_vessel_length/2.0,0};
+
+   exit_port_flange_pos = chamber_port_flange_pos + G4ThreeVector(0,0,steel_vessel_length + 2.0*chamber_port_flange_thickness);
+   exit_port_flange_offset = {0,0,0};
+
+   exit_port_collimator_pos = chamber_port_flange_pos + G4ThreeVector(0,0,steel_vessel_length + 2.0*chamber_port_flange_thickness);
+   exit_port_collimator_offset = {0,0,0};
+
+   glass_cell_pos = chamber_port_flange_pos + G4ThreeVector(0,0,chamber_port_flange_thickness + steel_vessel_length/2.0);;
+   glass_cell_offset = {0,glass_cell_vertical_offset-glass_cell_height_to_tube-glass_cell_tupe_height/2.0,0};
 
    scoring_pos          = { 0, 0, radiator_thickness/2.0 + radiator_collimator_gap/2.0 };
    window_pos           = { 0, 0, collimator_z_end - window_thickness/2.0 };
@@ -335,6 +322,103 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
    G4Colour         port_collimator_color {red, green, blue, alpha };
    G4VisAttributes* port_collimator_vis   = new G4VisAttributes(port_collimator_color);
    port_collimator_log->SetVisAttributes(port_collimator_vis);
+
+   // -----------------------------------------------
+   // Steel Chamber
+   red       = 250.0/256.0;
+   green     = 250.0/256.0;
+   blue      = 0.0/256.0;
+   alpha     = 0.4;
+
+   auto mesh3 = CADMesh::TessellatedMesh::FromPLY(BUBBLESIM_GEOMETRY_DIR "/steel_vessel.ply");
+   mesh3->SetScale( mm );
+   mesh3->SetOffset( steel_chamber_offset );
+
+   density = 8.02*g/cm3 ;
+   G4Material *stainless = new G4Material("Stainless steel",density,5);
+   stainless->AddElement(nist->FindOrBuildElement("Mn")/*Mn*/, 0.02);
+   stainless->AddElement(nist->FindOrBuildElement("Si")/*Si*/, 0.01);
+   stainless->AddElement(nist->FindOrBuildElement("Cr")/*Cr*/, 0.19);
+   stainless->AddElement(nist->FindOrBuildElement("Ni")/*Ni*/, 0.10);
+   stainless->AddElement(nist->FindOrBuildElement("Fe")/*Fe*/, 0.68);
+   G4RotationMatrix* rot3 = new G4RotationMatrix( CLHEP::HepRotationX(90.0*deg) );
+    
+   steel_chamber_mat   = stainless;//nist->FindOrBuildMaterial("G4_Ag");
+   steel_chamber_solid = mesh3->GetSolid();
+   steel_chamber_log   = new G4LogicalVolume(steel_chamber_solid, steel_chamber_mat, "steel_chamber_log", 0, 0, 0);
+   steel_chamber_phys  = new G4PVPlacement(rot3, steel_chamber_pos+steel_chamber_offset,  steel_chamber_log,
+                                             "steel_chamber_phys", world_log, false, 0);
+
+   G4Colour         steel_chamber_color {red, green, blue, alpha };
+   G4VisAttributes* steel_chamber_vis   = new G4VisAttributes(steel_chamber_color);
+   steel_chamber_log->SetVisAttributes(steel_chamber_vis);
+
+   // ------------------------------------------------------------------------
+   // Chamber Exit Port Flange
+   red       = 0.0/256.0;
+   green     = 0.0/256.0;
+   blue      = 200.0/256.0;
+   alpha     = 0.4;
+
+   auto exit_flange_mesh = CADMesh::TessellatedMesh::FromPLY(BUBBLESIM_GEOMETRY_DIR "/beam_exit_flange.ply");
+   exit_flange_mesh->SetScale( mm );
+   exit_flange_mesh->SetOffset( exit_port_flange_offset );
+
+   G4RotationMatrix* rot4 = new G4RotationMatrix( CLHEP::HepRotationY(180.0*deg) );
+
+   exit_port_flange_mat = nist->FindOrBuildMaterial("G4_Cu");
+   exit_port_flange_solid = exit_flange_mesh->GetSolid();
+   exit_port_flange_log   = new G4LogicalVolume(exit_port_flange_solid, exit_port_flange_mat, "exit_port_flange_log", 0, 0, 0);
+   exit_port_flange_phys  = new G4PVPlacement(rot4, exit_port_flange_pos, exit_port_flange_log,
+                                    "exit_port_flange_phys", world_log, false, 0);
+
+   G4Colour         exit_port_flange_color {red, green, blue, alpha };
+   G4VisAttributes* exit_port_flange_vis   = new G4VisAttributes(exit_port_flange_color);
+   exit_port_flange_log->SetVisAttributes(exit_port_flange_vis);
+
+   // ------------------------------------------------------------------------
+   // Chamber exit port
+   red       = 250.0/256.0;
+   green     = 0.0/256.0;
+   blue      = 1.0/256.0;
+   alpha     = 0.4;
+
+   auto mesh5 = CADMesh::TessellatedMesh::FromPLY(BUBBLESIM_GEOMETRY_DIR "/beam_exit_port_and_collimator.ply");
+   mesh5->SetScale( mm );
+   mesh5->SetOffset( exit_port_collimator_offset );
+
+   exit_port_collimator_mat = nist->FindOrBuildMaterial("G4_Cu");
+   exit_port_collimator_solid = mesh5->GetSolid();
+   exit_port_collimator_log   = new G4LogicalVolume(exit_port_collimator_solid, exit_port_collimator_mat, "exit_port_collimator_log", 0, 0, 0);
+   exit_port_collimator_phys  = new G4PVPlacement(rot4, exit_port_collimator_pos, exit_port_collimator_log,
+                                    "exit_port_collimator_phys", world_log, false, 0);
+
+   G4Colour         exit_port_collimator_color {red, green, blue, alpha };
+   G4VisAttributes* exit_port_collimator_vis   = new G4VisAttributes(exit_port_collimator_color);
+   exit_port_collimator_log->SetVisAttributes(exit_port_collimator_vis);
+
+   // ------------------------------------------------------------------------
+   // Glass Cell
+   red       =   0.0/256.0;
+   green     = 200.0/256.0;
+   blue      =   0.0/256.0;
+   alpha     = 0.4;
+
+   auto mesh6 = CADMesh::TessellatedMesh::FromPLY(BUBBLESIM_GEOMETRY_DIR "/glass_to_kovar_single_fluid.ply");
+   mesh6->SetScale( mm );
+   mesh6->SetOffset( {0,0,0} );
+
+   G4RotationMatrix* rot6 = new G4RotationMatrix( CLHEP::HepRotationX(90.0*deg) );
+
+   glass_cell_mat = nist->FindOrBuildMaterial("G4_Cu");
+   glass_cell_solid = mesh6->GetSolid();
+   glass_cell_log   = new G4LogicalVolume(glass_cell_solid, glass_cell_mat, "glass_cell_log", 0, 0, 0);
+   glass_cell_phys  = new G4PVPlacement(rot6, glass_cell_pos+glass_cell_offset, glass_cell_log,
+                                    "glass_cell_phys", world_log, false, 0);
+
+   G4Colour         glass_cell_color {red, green, blue, alpha };
+   G4VisAttributes* glass_cell_vis   = new G4VisAttributes(glass_cell_color);
+   glass_cell_log->SetVisAttributes(glass_cell_vis);
 
    //// ------------------------------------------------------------------------
    //// Part II : downstream inner cone 
