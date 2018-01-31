@@ -28,18 +28,24 @@ class B1ParallelWorldConstruction : public G4VUserParallelWorld
    private:
       G4bool        fConstructed;
       G4bool        fNeedsRebuilt;
-      double        fSpanDistance  = 32.0*cm;
+      double        fSpanDistance  = 35*2.54*cm;//64.0*cm;
       G4ThreeVector fDirection    {0,0,1.0};
-      G4ThreeVector fStartingPoint{0,0,0} ;
+      G4ThreeVector fStartingPoint{0,0,3.25*mm} ;
       double        fDet_size      = 10.0*cm;
 
-      static const int fNplanes = 10;
+      static const int fNplanes = 6;
       std::array< G4ThreeVector      , fNplanes > fDet_pos   ;
       std::array< G4VSolid          *, fNplanes > fDet_solid ;
       std::array< G4LogicalVolume   *, fNplanes > fDet_log   ;
       std::array< G4VPhysicalVolume *, fNplanes > fDet_phys  ;
       std::array< FakeSD            *, fNplanes > fDet_det  ;
       std::array< G4VisAttributes   *, fNplanes > fDet_vis  ;
+      //std::array< G4ThreeVector      , fNplanes > fDet_pos = {
+      //  {0,0,3.25*mm},
+      //  {0,0,3.25*mm + 1.0*mm + 6.0*2.54*cm },
+      //  {0,0,3.25*mm + 1.0*mm + 6.0*2.54*cm + 15.24*cm + 5.17*mm}
+      //};
+
 
    public:
       B1ParallelWorldConstruction(G4String& parallelWorldName);

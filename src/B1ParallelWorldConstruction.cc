@@ -25,6 +25,14 @@ B1ParallelWorldConstruction ::B1ParallelWorldConstruction(G4String& parallelWorl
       fDet_det[i]    = nullptr;
       fDet_vis[i]    = nullptr;
    }
+   fDet_pos = {{
+     {0,0,3.25*mm},
+     {0,0,3.25*mm + 1.0*mm + 6.0*2.54*cm },
+     {0,0,3.25*mm + 1.0*mm + 6.0*2.54*cm + 15.24*cm + 6.17*mm},
+     {0,0,3.25*mm + 1.0*mm + 6.0*2.54*cm + 6.17*mm  + 2.0*2.54*cm + 30.48*cm - 15.24*cm - 9.17*mm},
+     {0,0,3.25*mm + 1.0*mm + 6.0*2.54*cm + 6.17*mm  +2.0*2.54*cm + 30.48*cm + 5.0*mm},
+     {0,0,3.25*mm + 1.0*mm + 6.0*2.54*cm + 15.24*cm + 6.17*mm + 38.10*mm + 15.24*cm+ 4.0*mm +15.0*2.54*cm}
+   }};
    std::cout << "Parallel world ctor" <<std::endl;
 }
 //______________________________________________________________________________
@@ -67,13 +75,16 @@ void B1ParallelWorldConstruction::Construct()
    //
    G4VPhysicalVolume * ghostWorld   = GetWorld();
    G4LogicalVolume   * worldLogical = ghostWorld->GetLogicalVolume();
+   auto world_vis   = new G4VisAttributes(G4VisAttributes::GetInvisible());
+   //(*world_vis) = ;
+   world_vis->SetForceWireframe(true);
+   worldLogical->SetVisAttributes(world_vis);
 
    // --------------------------------------------------------------
    // 
 
    double        scoring_length = 1.0*um;
    double        step_size   = fSpanDistance/double(fNplanes-1);
-   G4ThreeVector scoring_pos = fStartingPoint;
    G4ThreeVector step        = fDirection;
    step.setMag(step_size);
 
@@ -101,7 +112,7 @@ void B1ParallelWorldConstruction::Construct()
 
       scoring_solid = new G4Tubs(detname_solid, 0.0, fDet_size/2.0, scoring_length/2.0, 0.0, 360.*deg );
       scoring_log   = new G4LogicalVolume(scoring_solid, 0, detname_log);
-      scoring_phys  = new G4PVPlacement(0,scoring_pos, scoring_log, detname_phys, worldLogical,false,0,checkOverlaps);                                  
+      scoring_phys  = new G4PVPlacement(0,fDet_pos[i], scoring_log, detname_phys, worldLogical,false,0,checkOverlaps);                                  
 
       G4Colour            scoring_color {red, green, blue, alpha };   // Gray 
       if(!scoring_vis) {
@@ -122,7 +133,6 @@ void B1ParallelWorldConstruction::Construct()
       G4SDManager::GetSDMpointer()->AddNewDetector(scoring_det);
       scoring_log->SetSensitiveDetector(scoring_det);
 
-      scoring_pos += step;
    }
 
    //

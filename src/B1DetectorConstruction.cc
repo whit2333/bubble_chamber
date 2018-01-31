@@ -122,13 +122,14 @@ void B1DetectorConstruction::CalculatePositions()
    chamber_port_offset = {0,0, 0.0*chamber_port_length/2.0 };
 
    // The collimator insert
-   port_collimator_pos  = chamber_port_pos ;
+   G4double insert_extra = std::abs(collimator_insert_length - flange_collimator_length);//+chamber_flange_port_offset;
+   port_collimator_pos  = chamber_port_pos + G4ThreeVector(0,0,insert_extra/1.1);// insert almost all the way
    port_collimator_offset = {0,0, 0.0*collimator_insert_length/2.0 };
 
-   steel_chamber_pos    = chamber_port_flange_pos
-   + G4ThreeVector( 0,
-                   steel_vessel_length/2.0 - steel_vessel_height2 + steel_vessel_port_top_offset + steel_vessel_port_diameter/2.0,
-                   chamber_port_flange_thickness + steel_vessel_length);
+   steel_chamber_pos    = chamber_port_flange_pos + G4ThreeVector(0,
+                                                                  steel_vessel_length/2.0 - steel_vessel_height2 + 
+                                                                  steel_vessel_port_top_offset + steel_vessel_port_diameter/2.0,
+                                                                  chamber_port_flange_thickness + steel_vessel_length);
    steel_chamber_offset = {-1.0*steel_vessel_length/2.0,-1.0*steel_vessel_length/2.0,0};
 
    exit_port_flange_pos = chamber_port_flange_pos + G4ThreeVector(0,0,steel_vessel_length + 2.0*chamber_port_flange_thickness);
@@ -137,8 +138,11 @@ void B1DetectorConstruction::CalculatePositions()
    exit_port_collimator_pos = chamber_port_flange_pos + G4ThreeVector(0,0,steel_vessel_length + 2.0*chamber_port_flange_thickness);
    exit_port_collimator_offset = {0,0,0};
 
-   glass_cell_pos = chamber_port_flange_pos + G4ThreeVector(0,0,chamber_port_flange_thickness + steel_vessel_length/2.0);;
+   glass_cell_pos = chamber_port_flange_pos + G4ThreeVector(0,0,chamber_port_flange_thickness + steel_vessel_length/2.0);
    glass_cell_offset = {0,glass_cell_vertical_offset-glass_cell_height_to_tube-glass_cell_tupe_height/2.0,0};
+
+   photon_dump_pos    = glass_cell_pos + G4ThreeVector(0,0,chamber_photon_dump_sep);
+   photon_dump_offset = {0,0,0};
 
    scoring_pos          = { 0, 0, radiator_thickness/2.0 + radiator_collimator_gap/2.0 };
    window_pos           = { 0, 0, collimator_z_end - window_thickness/2.0 };
@@ -190,7 +194,7 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 
    G4Colour            world_color {red, green, blue, alpha }; 
    G4VisAttributes   * world_vis   = new G4VisAttributes(world_color);
-   //(*world_vis) = G4VisAttributes::GetInvisible();
+   (*world_vis) = G4VisAttributes::GetInvisible();
    world_vis->SetForceWireframe(true);
    world_log->SetVisAttributes(world_vis);
 
@@ -313,7 +317,17 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
    mesh2->SetScale( mm );
    mesh2->SetOffset( port_collimator_offset );
 
-   port_collimator_mat   = nist->FindOrBuildMaterial("G4_Ag");
+   // Tungsten alloy
+   // https://www.tungsten.com/products/tungsten-alloy/
+   // 18.5 gm/cc
+   //97% W, 2.1% Ni, 0.9% Fe
+   density = 18.5*g/cm3;
+   G4Material *tungsten_alloy = new G4Material("Tungsten Alloy",density,3);
+   tungsten_alloy->AddElement(nist->FindOrBuildElement("W" ), 0.97);
+   tungsten_alloy->AddElement(nist->FindOrBuildElement("Ni"), 0.021);
+   tungsten_alloy->AddElement(nist->FindOrBuildElement("Fe"), 0.009);
+
+   port_collimator_mat   = tungsten_alloy;
    port_collimator_solid = mesh2->GetSolid();
    port_collimator_log   = new G4LogicalVolume(port_collimator_solid, port_collimator_mat, "port_collimator_log", 0, 0, 0);
    port_collimator_phys  = new G4PVPlacement(0, port_collimator_pos, port_collimator_log,
@@ -410,7 +424,7 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 
    G4RotationMatrix* rot6 = new G4RotationMatrix( CLHEP::HepRotationX(90.0*deg) );
 
-   glass_cell_mat = nist->FindOrBuildMaterial("G4_Cu");
+   glass_cell_mat = nist->FindOrBuildMaterial("G4_Pyrex_Glass");
    glass_cell_solid = mesh6->GetSolid();
    glass_cell_log   = new G4LogicalVolume(glass_cell_solid, glass_cell_mat, "glass_cell_log", 0, 0, 0);
    glass_cell_phys  = new G4PVPlacement(rot6, glass_cell_pos+glass_cell_offset, glass_cell_log,
@@ -419,6 +433,23 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
    G4Colour         glass_cell_color {red, green, blue, alpha };
    G4VisAttributes* glass_cell_vis   = new G4VisAttributes(glass_cell_color);
    glass_cell_log->SetVisAttributes(glass_cell_vis);
+
+   // ------------------------------------------------------------------------
+   // Photon beam dump
+   red       =   0.0/256.0;
+   green     =   0.0/256.0;
+   blue      = 255.0/256.0;
+   alpha     = 0.2;
+
+   photon_dump_mat = nist->FindOrBuildMaterial("G4_Al");
+   photon_dump_solid = new G4Box( "photon_dump_dolid", 0.5*4.0*2.54*cm, 0.5*4.0*2.54*cm, 0.5*16.0*2.54*cm );
+   photon_dump_log   = new G4LogicalVolume(photon_dump_solid, photon_dump_mat, "photon_dump_log", 0, 0, 0);
+   photon_dump_phys  = new G4PVPlacement(0, photon_dump_pos+photon_dump_offset, photon_dump_log,
+                                    "photon_dump_phys", world_log, false, 0);
+
+   G4Colour         photon_dump_color {red, green, blue, alpha };
+   G4VisAttributes* photon_dump_vis   = new G4VisAttributes(photon_dump_color);
+   photon_dump_log->SetVisAttributes(photon_dump_vis);
 
    //// ------------------------------------------------------------------------
    //// Part II : downstream inner cone 

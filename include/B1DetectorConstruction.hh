@@ -20,9 +20,9 @@ class B1DetectorConstruction : public G4VUserDetectorConstruction
 {
    private:
 
-      G4double world_x                        = 1.0*m        ;
-      G4double world_y                        = 1.0*m        ;
-      G4double world_z                        = 2.0*m        ;
+      G4double world_x                        = 3.0*m        ;
+      G4double world_y                        = 3.0*m        ;
+      G4double world_z                        = 3.0*m        ;
       G4double radiator_thickness             = 6.0*mm       ;
       G4double radiator_collimator_gap        = 1.0*mm       ; // ?
       G4double collimator_OD                  = 4.0*2.54*cm  ;
@@ -49,6 +49,8 @@ class B1DetectorConstruction : public G4VUserDetectorConstruction
       G4double glass_cell_total_height      = 101.53*mm;
       G4double glass_cell_height_to_tube    = 63.43*mm;
       G4double glass_cell_vertical_offset   = 8.888*mm;
+
+      G4double chamber_photon_dump_sep      = 30.0*2.54*cm;
 
       G4double beampipe_length              = 20.0*cm ;
       G4double beampipe_diameter            = 8.0*cm  ;
@@ -143,6 +145,13 @@ class B1DetectorConstruction : public G4VUserDetectorConstruction
       G4VSolid          * glass_cell_solid ;
       G4LogicalVolume   * glass_cell_log ;  
       G4VPhysicalVolume * glass_cell_phys;  
+
+      G4ThreeVector       photon_dump_pos;
+      G4ThreeVector       photon_dump_offset;
+      G4Material        * photon_dump_mat ;  
+      G4VSolid          * photon_dump_solid ;
+      G4LogicalVolume   * photon_dump_log ;  
+      G4VPhysicalVolume * photon_dump_phys;  
 
       G4ThreeVector       scoring_pos;
       G4Material        * scoring_mat   ;
