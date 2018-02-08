@@ -10,6 +10,14 @@ B1ActionInitialization::B1ActionInitialization(G4int rn) : G4VUserActionInitiali
    fRunNumber(rn)
 { }
 //______________________________________________________________________________
+B1ActionInitialization::B1ActionInitialization(const Settings& sim_set) : G4VUserActionInitialization(),
+   fRunNumber(sim_set.run_number)
+{
+  sim_settings = sim_set;
+  PrintSettings(sim_settings);
+}
+//______________________________________________________________________________
+
 
 B1ActionInitialization::~B1ActionInitialization()
 { }
@@ -26,9 +34,14 @@ void B1ActionInitialization::Build() const
 {
   auto primary_action = new B1PrimaryGeneratorAction();
   //auto primary_action = new SimplePrimaryGeneratorAction();
+  
+  using namespace CLHEP;
   primary_action->SetBeamEnergy(fBeamEnergy);
-  SetUserAction(primary_action);
+  primary_action->fVertex = G4ThreeVector(sim_settings.vertex.at(0)*mm,
+                                          sim_settings.vertex.at(1)*mm,
+                                          sim_settings.vertex.at(2)*mm);
 
+  SetUserAction(primary_action);
   SetUserAction(new B1RunAction(fRunNumber));
 
   B1EventAction* eventAction = new B1EventAction;

@@ -202,7 +202,7 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
    // beam vacuum  
    // ------------------------------------------------------------------------
    density     = universe_mean_density;
-   pressure    = 1.e-7*bar;
+   pressure    = 1.e-19*bar;
    temperature = 0.1*kelvin;
    red       = 0.0/256.0;
    green     = 0.0/256.0;

@@ -52,7 +52,7 @@ class B1DetectorConstruction : public G4VUserDetectorConstruction
 
       G4double chamber_photon_dump_sep      = 30.0*2.54*cm;
 
-      G4double beampipe_length              = 20.0*cm ;
+      G4double beampipe_length              = 50.0*cm ;
       G4double beampipe_diameter            = 8.0*cm  ;
       G4double radiator_diameter            = 8.0*cm  ;
       G4double scoring_diameter             = 1.5*2.54*cm ;
