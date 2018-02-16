@@ -142,7 +142,9 @@ int main(int argc,char** argv)
   auto cli_basics = (
     ( option("-r", "--run") & value("run_number",S.run_number) )      % "set the run number",
     ( option("-E", "--energy") & number("energy",gps_conf.energy) )      % "set beam energy [MeV]",
-    (option("-v","--vertex").set(S.vertex_set) & value("x", S.vertex[0]) & value("y",  S.vertex[1]) & value("z", S.vertex[2])) % "vertex position [mm]",
+    ( option("-e", "--delta") & number("delta",S.delta_E) )      % "beam energy spread[MeV]",
+    (option("-V","--vertex").set(S.vertex_set) & value("x", S.vertex[0]) & value("y",  S.vertex[1]) & value("z", S.vertex[2])) % "vertex position [mm]",
+    (option("-R","--vertexRMS").set(S.vertex_set) & value("x", S.vertex_rms[0]) & value("y",  S.vertex_rms[1]) & value("z", S.vertex_rms[2])) % "vertex position RMS [mm]",
     ( option("-m", "--macro") & value("macro",S.macroFile).set(S.has_macro_file,true) )      % "set the run number",
     option("-b", "--batch")([&](){S.use_gui=false; S.use_vis=false; S.is_interactive=false;}) % "run in batch mode (no gui or vis)",
     (option("-g", "--gui") & integer("gui")([&](auto v){S.use_gui=v;}))                 % "use GUI ",
@@ -264,87 +266,6 @@ int main(int argc,char** argv)
       break;
   }
 
-
-  //---------------------------------------------------------------------------
-
-  //int index = 0;
-  //int iarg  = 0;
-  //opterr    = 1; //turn off getopt error message
-  //const struct option longopts[] =
-  //{
-  //  {"run",         required_argument,  0, 'r'},
-  //  {"gui",         required_argument,  0, 'g'},
-  //  {"vis",         required_argument,  0, 'V'},
-  //  {"interactive", no_argument,        0, 'i'},
-  //  {"batch",       no_argument,        0, 'b'},
-  //  {"output",      required_argument,  0, 'o'},
-  //  {"tree",        required_argument,  0, 't'},
-  //  {"help",        no_argument,        0, 'h'},
-  //  {"init",        no_argument,        0, 'I'},
-  //  {0,0,0,0}
-  //};
-  //while(iarg != -1) {
-  //  iarg = getopt_long(argc, argv, "o:h:g:r:V:ibhI", longopts, &index);
-
-  //  switch (iarg)
-  //  {
-  //    case 'b':
-  //      is_interactive = false;
-  //      use_gui = false;
-  //      use_vis = false;
-  //      break;
-
-  //    case 'i':
-  //      is_interactive = true;
-  //      break;
-
-  //    case 'V':
-  //      if( atoi(optarg) == 0 ){
-  //        use_vis = false;
-  //      } else  {
-  //        use_vis = true;
-  //      }
-  //      break;
-
-  //    case 'r':
-  //      run_number = atoi( optarg );
-  //      break;
-
-  //    case 'g':
-  //      if( atoi(optarg) == 0 ){
-  //        use_gui = false;
-  //      } else  {
-  //        use_gui = true;
-  //      }
-  //      break;
-
-  //    case 't':
-  //      output_tree_name = optarg;
-  //      break;
-
-  //    case 'I':
-  //      run_manager_init = true;
-  //      break;
-
-  //    case 'o':
-  //      output_file_name = optarg;
-  //      if( fexists(output_file_name) ) {
-  //        std::cout << "Error : " << output_file_name << " already exist"  << std::endl;
-  //        exit(EXIT_FAILURE);
-  //      }
-  //      break;
-
-  //    case 'h':
-  //      print_help();
-  //      exit(0);
-  //      break;
-
-  //    case '?':
-  //      print_help();
-  //      exit(EXIT_FAILURE);
-  //      break;
-  //  }
-  //}
 
   // here we assume the last argument is a macro file 
   if( optind < argc ) {

@@ -45,7 +45,9 @@ struct Settings {
   bool         is_copy_command   = false;
   bool         use_gps           = false;
   bool         vertex_set        = false;
-  std::array<double,3> vertex = {{0, 0, 0}};
+  std::array<double,3> vertex    = {{0, 0, 0}};
+  std::array<double,3> vertex_rms = {{0, 0, 0}};
+  double       delta_E = 0.0001;
 
   std::map<CopyMode, std::vector<std::string>> copymode_file_names = {
     {CopyMode::vis, { BUBBLESIM_MACRO_DIR "/examples/vis.mac",

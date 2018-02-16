@@ -37,9 +37,13 @@ void B1ActionInitialization::Build() const
   
   using namespace CLHEP;
   primary_action->SetBeamEnergy(fBeamEnergy);
+  primary_action->fEnergy_sig   = sim_settings.delta_E *MeV;
   primary_action->fVertex = G4ThreeVector(sim_settings.vertex.at(0)*mm,
                                           sim_settings.vertex.at(1)*mm,
                                           sim_settings.vertex.at(2)*mm);
+  primary_action->fVertex_x_sig = sim_settings.vertex_rms.at(0)*mm;
+  primary_action->fVertex_y_sig = sim_settings.vertex_rms.at(1)*mm;
+  primary_action->InitRand();
 
   SetUserAction(primary_action);
   SetUserAction(new B1RunAction(fRunNumber));
