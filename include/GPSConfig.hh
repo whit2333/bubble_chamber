@@ -47,7 +47,7 @@ struct Settings {
   bool         vertex_set        = false;
   std::array<double,3> vertex    = {{0, 0, 0}};
   std::array<double,3> vertex_rms = {{0, 0, 0}};
-  double       delta_E = 0.0001;
+  double       delta_E = 0.003;
 
   std::map<CopyMode, std::vector<std::string>> copymode_file_names = {
     {CopyMode::vis, { BUBBLESIM_MACRO_DIR "/examples/vis.mac",

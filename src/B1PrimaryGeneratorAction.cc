@@ -39,7 +39,6 @@ B1PrimaryGeneratorAction::~B1PrimaryGeneratorAction()
 }
 //______________________________________________________________________________
 
-
 void B1PrimaryGeneratorAction::InitRand()
 {
   if (!fRandVertex_x) delete fRandVertex_x;
@@ -49,6 +48,7 @@ void B1PrimaryGeneratorAction::InitRand()
   if (!fRandEnergy)   delete fRandEnergy;
   fRandEnergy= new CLHEP::RandGauss(CLHEP::HepRandom::getTheEngine(),fBeamEnergy,fEnergy_sig);
 }
+//______________________________________________________________________________
 
 void B1PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
@@ -71,8 +71,8 @@ void B1PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   fParticleGun->SetParticlePosition(primary_postion);
   fParticleGun->GeneratePrimaryVertex(anEvent);
 
-  anEvent->Print();
-  anEvent->GetPrimaryVertex()->Print();
+  //anEvent->Print();
+  //anEvent->GetPrimaryVertex()->Print();
 }
 //______________________________________________________________________________
 
