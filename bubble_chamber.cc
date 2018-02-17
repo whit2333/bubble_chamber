@@ -31,6 +31,8 @@
 #include "G4ParallelWorldPhysics.hh"
 
 #include "GPSConfig.hh"
+#include "G4Run.hh"
+
 
 template<class C>
 void print_help(C cli)
@@ -137,7 +139,7 @@ int main(int argc,char** argv)
   using CopyMode = Settings::CopyMode;
   using Mode     = Settings::Mode;
   Settings  S;
-  GPSConfig gps_conf;
+  GPSConfig& gps_conf = S.gps_conf;
 
   auto cli_basics = (
     ( option("-r", "--run") & value("run_number",S.run_number) )      % "set the run number",
@@ -419,6 +421,13 @@ int main(int argc,char** argv)
     ui->SessionStart();
     delete ui;
   }
+
+  // get number of events  simulated
+  if (S.number_of_events < 0) {
+    S.number_of_events = runManager->GetCurrentRun()->GetNumberOfEvent();
+  }
+
+  PrintSettings(S);
 
   // Job termination
   // Free the store: user actions, physics_list and detector_description are

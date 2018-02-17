@@ -33,7 +33,7 @@ class B1ParallelWorldConstruction : public G4VUserParallelWorld
       G4ThreeVector fStartingPoint{0,0,3.25*mm} ;
       double        fDet_size      = 10.0*cm;
 
-      static const int fNplanes = 6;
+      static const int fNplanes = 7;
       std::array< G4ThreeVector      , fNplanes > fDet_pos   ;
       std::array< G4VSolid          *, fNplanes > fDet_solid ;
       std::array< G4LogicalVolume   *, fNplanes > fDet_log   ;

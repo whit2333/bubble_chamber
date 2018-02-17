@@ -26,6 +26,7 @@ B1ParallelWorldConstruction ::B1ParallelWorldConstruction(G4String& parallelWorl
       fDet_vis[i]    = nullptr;
    }
    fDet_pos = {{
+     {0,0,-3.25*mm},
      {0,0,3.25*mm},
      {0,0,3.25*mm + 1.0*mm + 6.0*2.54*cm },
      {0,0,3.25*mm + 1.0*mm + 6.0*2.54*cm + 15.24*cm + 6.17*mm},
@@ -120,6 +121,7 @@ void B1ParallelWorldConstruction::Construct()
       } else {
          scoring_vis->SetColour(scoring_color);
       }
+      scoring_vis->SetForceWireframe(true);
       scoring_log->SetVisAttributes(scoring_vis); 
       //G4UserLimits * scoring_limits = new G4UserLimits(0.004*um);
       //scoring_log->SetUserLimits(scoring_limits);
@@ -135,37 +137,6 @@ void B1ParallelWorldConstruction::Construct()
 
    }
 
-   //
-   // material defined in the mass world
-   //
-   //G4Material* water = G4Material::GetMaterial("G4_WATER");
-
-   ////
-   //// parallel world placement box
-   ////
-   //G4VSolid* paraBox = new G4Box("paraBox",5.0*cm,30.0*cm,5.0*cm);
-   //G4LogicalVolume* paraBoxLogical = new G4LogicalVolume(paraBox,water,
-   //                                                      "paraBox");
-   //new G4PVPlacement(0,G4ThreeVector(-25.0*cm,0.,0.),paraBoxLogical,
-   //                  "paraBox",worldLogical,false,0);
-
-   ////
-   //// mother of parallel world parameterized volumes
-   ////
-   //G4VSolid* paraMom = new G4Box("paraMom",20.0*cm,40.0*cm,20.0*cm);
-   //G4LogicalVolume* paraMomLogical = new G4LogicalVolume(paraMom,0,"paraMom");
-   //new G4PVPlacement(0,G4ThreeVector(10.0*cm,0.,0.),paraMomLogical,"paraMom",
-   //                  worldLogical,false,0);
-
-   ////
-   //// parallel world parameterized volumes
-   ////
-   //G4VSolid* paraPara = new G4Box("paraPara",5.0*cm,15.0*cm,10.0*cm);
-   //G4LogicalVolume* paraParaLogical = new G4LogicalVolume(paraPara,water,
-   //                                                       "paraPara");
-   //B1ParallelWorldParam* param = new B1ParallelWorldParam();
-   //new G4PVParameterised("paraPara",paraParaLogical,paraMomLogical,
-   //                         kXAxis, 2, param);
    fNeedsRebuilt = false;
 
 }

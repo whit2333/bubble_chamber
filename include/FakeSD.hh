@@ -30,6 +30,10 @@ class FakeSD : public G4VSensitiveDetector
      G4int  fhXY1_gamma;
      G4int  fhXY2_gamma;
 
+     G4int  fhPXY0_gamma;
+     G4int  fhPXY1_gamma;
+     G4int  fhPXY2_gamma;
+
      G4int  fhBackScatEnergy;
      G4int  fhForwardScatEnergy;
      G4int  fhBackScatXYEnergyWt;

@@ -48,6 +48,8 @@ struct Settings {
   std::array<double,3> vertex    = {{0, 0, 0}};
   std::array<double,3> vertex_rms = {{0, 0, 0}};
   double       delta_E = 0.003;
+  GPSConfig    gps_conf;
+
 
   std::map<CopyMode, std::vector<std::string>> copymode_file_names = {
     {CopyMode::vis, { BUBBLESIM_MACRO_DIR "/examples/vis.mac",
