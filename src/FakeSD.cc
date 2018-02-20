@@ -18,7 +18,7 @@ FakeSD::FakeSD(G4String name) : G4VSensitiveDetector(name)
   fAnalysisManager = G4AnalysisManager::Instance();
 
   double hist_Emax = 6.0;
-  int N_E_bins = 200
+  int N_E_bins = 200;
   // Creating histograms
   fhBackward_0  = fAnalysisManager->CreateH1(name+"/back0","Backward scattered energies", N_E_bins,0,hist_Emax);
   fhForward_0   = fAnalysisManager->CreateH1(name+"/forw0","Forward scattered energies",  N_E_bins,0,hist_Emax);
