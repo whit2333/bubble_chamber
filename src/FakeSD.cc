@@ -17,16 +17,16 @@ FakeSD::FakeSD(G4String name) : G4VSensitiveDetector(name)
 
   fAnalysisManager = G4AnalysisManager::Instance();
 
-  double hist_Emax = 8.0;
-
+  double hist_Emax = 6.0;
+  int N_E_bins = 200
   // Creating histograms
-  fhBackward_0  = fAnalysisManager->CreateH1(name+"/back0","Backward scattered energies", 100,0,hist_Emax);
-  fhForward_0   = fAnalysisManager->CreateH1(name+"/forw0","Forward scattered energies",  100,0,hist_Emax);
+  fhBackward_0  = fAnalysisManager->CreateH1(name+"/back0","Backward scattered energies", N_E_bins,0,hist_Emax);
+  fhForward_0   = fAnalysisManager->CreateH1(name+"/forw0","Forward scattered energies",  N_E_bins,0,hist_Emax);
 
-  fhXvsE_all       = fAnalysisManager->CreateH2(name+"/fhXvsE_all","E vs X all",     100,-10,10,100,0,hist_Emax);
-  fhXvsE_gamma     = fAnalysisManager->CreateH2(name+"/fhXvsE_gamma","E vs X gamma", 100,-10,10,100,0,hist_Emax);
-  fhXvsE_not_gamma = fAnalysisManager->CreateH2(name+"/fhXvsE_not_gamma","E vs X not gamma", 100,-10,10,100,0,hist_Emax);
-  fhXvsE_n         = fAnalysisManager->CreateH2(name+"/fhXvsE_n","E vs X n",         100,-10,10,100,0,hist_Emax);
+  fhXvsE_all       = fAnalysisManager->CreateH2(name+"/fhXvsE_all","E vs X all",     100,-10,10,N_E_bins,0,hist_Emax);
+  fhXvsE_gamma     = fAnalysisManager->CreateH2(name+"/fhXvsE_gamma","E vs X gamma", 100,-10,10,N_E_bins,0,hist_Emax);
+  fhXvsE_not_gamma = fAnalysisManager->CreateH2(name+"/fhXvsE_not_gamma","E vs X not gamma", 100,-10,10,N_E_bins,0,hist_Emax);
+  fhXvsE_n         = fAnalysisManager->CreateH2(name+"/fhXvsE_n","E vs X n",         100,-10,10,N_E_bins,0,hist_Emax);
 
   fhXY0_all    = fAnalysisManager->CreateH2(name+"/fhXY0_all","Y Vs X all; x [cm]; y [cm] ",     100,-10,10,100,-10,10);
   fhXY1_all    = fAnalysisManager->CreateH2(name+"/fhXY1_all","Y Vs X all; x [cm]; y [cm] ",     100,-5,5      ,100,-5,5);
@@ -96,10 +96,10 @@ G4bool FakeSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   G4StepPoint* preStep = aStep->GetPreStepPoint();
   G4TouchableHistory* touchable = (G4TouchableHistory*)(preStep->GetTouchable());
 
-  double pz           = aStep->GetPreStepPoint()->GetMomentum().z();
-  double energy       = aStep->GetPreStepPoint()->GetKineticEnergy()/MeV;
-  auto  pos           = aStep->GetPreStepPoint()->GetPosition();
-  auto  momentum      = aStep->GetPreStepPoint()->GetMomentum()/MeV;
+  double pz          = aStep->GetPreStepPoint()->GetMomentum().z();
+  double energy      = aStep->GetPreStepPoint()->GetKineticEnergy()/MeV;
+  auto   pos         = aStep->GetPreStepPoint()->GetPosition();
+  auto   momentum    = aStep->GetPreStepPoint()->GetMomentum()/MeV;
   double dE_step     = aStep->GetTotalEnergyDeposit()/MeV;
   double dE_non_ion  = aStep->GetNonIonizingEnergyDeposit()/MeV;
 
