@@ -25,6 +25,13 @@ B1ParallelWorldConstruction ::B1ParallelWorldConstruction(G4String& parallelWorl
       fDet_det[i]    = nullptr;
       fDet_vis[i]    = nullptr;
    }
+   for(int i = 0; i < fNNplanes; i++) {
+      fNDet_solid[i]  = nullptr;
+      fNDet_log[i]    = nullptr;
+      fNDet_phys[i]   = nullptr;
+      fNDet_det[i]    = nullptr;
+      fNDet_vis[i]    = nullptr;
+   }
    fDet_pos = {{
      {0,0,-3.25*mm},
      {0,0,3.25*mm},
@@ -76,6 +83,7 @@ void B1ParallelWorldConstruction::Construct()
    //
    G4VPhysicalVolume * ghostWorld   = GetWorld();
    G4LogicalVolume   * worldLogical = ghostWorld->GetLogicalVolume();
+   //auto world_vis   = new G4VisAttributes();
    auto world_vis   = new G4VisAttributes(G4VisAttributes::GetInvisible());
    //(*world_vis) = ;
    world_vis->SetForceWireframe(true);
@@ -94,7 +102,7 @@ void B1ParallelWorldConstruction::Construct()
       red       = 177.0/256.0;
       green     = 104.0/256.0;
       blue      = 177.0/256.0;
-      alpha     = 0.4;
+      alpha     = 0.7;
 
       scoring_solid  = fDet_solid[i];
       scoring_log    = fDet_log[i];
@@ -134,8 +142,57 @@ void B1ParallelWorldConstruction::Construct()
       //SetSensitiveDetector("scoring_log",scoring_det);
       G4SDManager::GetSDMpointer()->AddNewDetector(scoring_det);
       scoring_log->SetSensitiveDetector(scoring_det);
-
    }
+
+   // ---------------------
+   // Pb Pig detector
+   red       = 255.0/256.0;
+   green     = 104.0/256.0;
+   blue      = 0.0/256.0;
+   alpha     = 0.5;
+
+   int idet = 0;
+   scoring_solid  = fNDet_solid[idet];
+   scoring_log    = fNDet_log[idet];
+   scoring_phys   = fNDet_phys[idet];
+   scoring_det    = fNDet_det[idet];
+   scoring_vis    = fNDet_vis[idet];
+
+   if(scoring_phys)  delete scoring_phys;
+   if(scoring_log)   delete scoring_log;
+   if(scoring_solid) delete scoring_solid;
+   //if(scoring_det)   delete scoring_det;
+
+   std::string detname_solid = "Ndet_scoring_solid_" + std::to_string(idet);
+   std::string detname_log   = "Ndet_scoring_log_"   + std::to_string(idet);
+   std::string detname_phys  = "Ndet_scoring_phys_"  + std::to_string(idet);
+
+   fNDet_pos[idet] = Pb_pig_pos +  Pb_pig_offset + G4ThreeVector(0,190.0*mm,0);
+
+   G4RotationMatrix* rot = new G4RotationMatrix( CLHEP::HepRotationX(90.0*deg) );
+   scoring_solid = new G4Tubs( detname_solid, 0.0, 4.0*cm/2.0, 5.0*cm/2.0, 0.0, 360.*deg );
+   scoring_log   = new G4LogicalVolume( scoring_solid, 0, detname_log);
+   scoring_phys  = new G4PVPlacement( rot,fNDet_pos[idet], scoring_log, detname_phys, worldLogical,false,0,checkOverlaps);                                  
+
+   G4Colour            scoring_color {red, green, blue, alpha };   // Gray 
+   if(!scoring_vis) {
+     scoring_vis   = new G4VisAttributes(scoring_color);
+   } else {
+     scoring_vis->SetColour(scoring_color);
+   }
+   scoring_vis->SetForceWireframe(true);
+   scoring_log->SetVisAttributes(scoring_vis); 
+   //G4UserLimits * scoring_limits = new G4UserLimits(0.004*um);
+   //scoring_log->SetUserLimits(scoring_limits);
+
+   if(!scoring_det){
+     std::string sdname = "/n" + std::to_string(idet);
+     scoring_det = new FakeSD(sdname);
+   }
+
+   //SetSensitiveDetector("scoring_log",scoring_det);
+   G4SDManager::GetSDMpointer()->AddNewDetector(scoring_det);
+   scoring_log->SetSensitiveDetector(scoring_det);
 
    fNeedsRebuilt = false;
 

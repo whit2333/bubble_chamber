@@ -144,6 +144,12 @@ void B1DetectorConstruction::CalculatePositions()
    photon_dump_pos    = glass_cell_pos + G4ThreeVector(0,0,chamber_photon_dump_sep);
    photon_dump_offset = {0,0,0};
 
+   Pb_pig_pos = glass_cell_pos;
+   Pb_pig_offset = {559.0*mm, -414.0*mm - 52.0*mm - (367.0-52)*mm/2.0,0};
+
+   std::cout << " Pb_pig_pos    : " << Pb_pig_pos    << std::endl;
+   std::cout << " Pb_pig_offset : " << Pb_pig_offset << std::endl;
+
    scoring_pos          = { 0, 0, radiator_thickness/2.0 + radiator_collimator_gap/2.0 };
    window_pos           = { 0, 0, collimator_z_end - window_thickness/2.0 };
    scoring2_pos         = { 0, 0, collimator_z_end + collimator_target_center_gap };
@@ -450,6 +456,29 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
    G4Colour         photon_dump_color {red, green, blue, alpha };
    G4VisAttributes* photon_dump_vis   = new G4VisAttributes(photon_dump_color);
    photon_dump_log->SetVisAttributes(photon_dump_vis);
+
+   // ------------------------------------------------------------------------
+   // Pb Pig
+   red       =   0.0/256.0;
+   green     = 200.0/256.0;
+   blue      = 100.0/256.0;
+   alpha     = 0.4;
+
+   auto mesh7 = CADMesh::TessellatedMesh::FromPLY(BUBBLESIM_GEOMETRY_DIR "/Pb_pig.ply");
+   mesh7->SetScale( mm );
+   mesh7->SetOffset( {0,0,0} );
+
+   G4RotationMatrix* rot7 = new G4RotationMatrix( CLHEP::HepRotationX(0.0*deg) );
+
+   Pb_pig_mat = nist->FindOrBuildMaterial("G4_Pb");
+   Pb_pig_solid = mesh7->GetSolid();
+   Pb_pig_log   = new G4LogicalVolume(Pb_pig_solid, Pb_pig_mat, "Pb_pig_log", 0, 0, 0);
+   Pb_pig_phys  = new G4PVPlacement(rot7, Pb_pig_pos+Pb_pig_offset, Pb_pig_log,
+                                    "Pb_pig_phys", world_log, false, 0);
+
+   G4Colour         Pb_pig_color {red, green, blue, alpha };
+   G4VisAttributes* Pb_pig_vis   = new G4VisAttributes(Pb_pig_color);
+   Pb_pig_log->SetVisAttributes(Pb_pig_vis);
 
    //// ------------------------------------------------------------------------
    //// Part II : downstream inner cone 

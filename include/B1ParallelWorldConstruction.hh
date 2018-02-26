@@ -33,6 +33,10 @@ class B1ParallelWorldConstruction : public G4VUserParallelWorld
       G4ThreeVector fStartingPoint{0,0,3.25*mm} ;
       double        fDet_size      = 10.0*cm;
 
+
+      G4ThreeVector Pb_pig_pos    {0,0,336.2*mm };
+      G4ThreeVector Pb_pig_offset {559.0*mm,-623*mm,0};
+
       static const int fNplanes = 7;
       std::array< G4ThreeVector      , fNplanes > fDet_pos   ;
       std::array< G4VSolid          *, fNplanes > fDet_solid ;
@@ -45,7 +49,15 @@ class B1ParallelWorldConstruction : public G4VUserParallelWorld
       //  {0,0,3.25*mm + 1.0*mm + 6.0*2.54*cm },
       //  {0,0,3.25*mm + 1.0*mm + 6.0*2.54*cm + 15.24*cm + 5.17*mm}
       //};
-
+      //
+      // Neutron Detectors
+      static const int fNNplanes = 1;
+      std::array< G4ThreeVector      , fNNplanes > fNDet_pos   ;
+      std::array< G4VSolid          *, fNNplanes > fNDet_solid ;
+      std::array< G4LogicalVolume   *, fNNplanes > fNDet_log   ;
+      std::array< G4VPhysicalVolume *, fNNplanes > fNDet_phys  ;
+      std::array< FakeSD            *, fNNplanes > fNDet_det  ;
+      std::array< G4VisAttributes   *, fNNplanes > fNDet_vis  ;
 
    public:
       B1ParallelWorldConstruction(G4String& parallelWorldName);

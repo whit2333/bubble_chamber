@@ -153,6 +153,13 @@ class B1DetectorConstruction : public G4VUserDetectorConstruction
       G4LogicalVolume   * photon_dump_log ;  
       G4VPhysicalVolume * photon_dump_phys;  
 
+      G4ThreeVector       Pb_pig_pos;
+      G4ThreeVector       Pb_pig_offset;
+      G4Material        * Pb_pig_mat ;  
+      G4VSolid          * Pb_pig_solid ;
+      G4LogicalVolume   * Pb_pig_log ;  
+      G4VPhysicalVolume * Pb_pig_phys;  
+
       G4ThreeVector       scoring_pos;
       G4Material        * scoring_mat   ;
       G4VSolid          * scoring_solid ;
