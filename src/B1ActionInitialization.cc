@@ -4,6 +4,7 @@
 #include "B1RunAction.hh"
 #include "B1EventAction.hh"
 #include "B1SteppingAction.hh"
+#include "StackingAction.hh"
 
 
 B1ActionInitialization::B1ActionInitialization(G4int rn) : G4VUserActionInitialization(),
@@ -52,6 +53,9 @@ void B1ActionInitialization::Build() const
   SetUserAction(eventAction);
 
   SetUserAction(new B1SteppingAction(eventAction));
+
+  SetUserAction(new StackingAction());
+
 }  
 //______________________________________________________________________________
 

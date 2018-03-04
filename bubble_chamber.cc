@@ -287,9 +287,9 @@ int main(int argc,char** argv)
     }
   }
 
-  std::cout << " the rest of the arguments: " << S.theRest << std::endl;
-  std::cout << "output : " << S.output_file_name << std::endl;
-  std::cout << "  tree : " << S.output_tree_name << std::endl;
+  //std::cout << " the rest of the arguments: " << S.theRest << std::endl;
+  //std::cout << "output : " << S.output_file_name << std::endl;
+  //std::cout << "  tree : " << S.output_tree_name << std::endl;
 
   //---------------------------------------------------------------------------
 
